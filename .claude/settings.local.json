@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"C:/Users/SANTI R5/Documents/evoltica website\" -maxdepth 4 -iname \"*portafolio*\" -o -iname \"*portfolio*\" -o -iname \"*.pdf\" -o -iname \"*logo*\" 2>/dev/null)",
+      "Bash(ls -la \"/c/Users/SANTI R5/Downloads/Evoltica_Portafolio_5_Servicios.pptx\")",
+      "Bash(extract-text \"C:\\\\Users\\\\SANTI R5\\\\Downloads\\\\Evoltica_Portafolio_5_Servicios.pptx\")",
+      "Bash(find \"C:/Users/SANTI R5/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/f4c5841c-f7d5-4d0b-8921-915e796d5b58/0c55c772-8327-4c9e-b864-df648c5fb846/skills/pptx\" -maxdepth 2)"
+    ]
+  }
+}

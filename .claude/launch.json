@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "evoltica-dev",
+      "runtimeExecutable": "C:\\Users\\SANTIR~1\\AppData\\Local\\Temp\\claude\\C--Users-SANTI-R5-Documents-evoltica-website-evoltica-website-main\\a89019e0-0291-43f3-8df7-e346e3ddb8ac\\scratchpad\\node-v20.18.1-win-x64\\node.exe",
+      "runtimeArgs": ["node_modules/next/dist/bin/next", "dev", "-p", "3210"],
+      "port": 3210
+    }
+  ]
+}

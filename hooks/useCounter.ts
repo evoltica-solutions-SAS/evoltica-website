@@ -1,47 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useInView, useReducedMotion } from "framer-motion";
 
-export function useCounter(
-  end: number,
-  duration: number = 2000,
-  prefix: string = "",
-  suffix: string = ""
-) {
+export function useCounter(end: number, duration: number = 2000) {
   const [count, setCount] = useState(0);
-  const [hasStarted, setHasStarted] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (isInView && !hasStarted) {
-      setHasStarted(true);
-      const startTime = Date.now();
-      const startValue = 0;
-
-      const easeOutQuad = (t: number) => t * (2 - t);
-
-      const timer = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const easedProgress = easeOutQuad(progress);
-        const currentValue = Math.floor(
-          startValue + (end - startValue) * easedProgress
-        );
-
-        setCount(currentValue);
-
-        if (progress >= 1) {
-          setCount(end);
-          clearInterval(timer);
-        }
-      }, 16);
-
-      return () => clearInterval(timer);
+    if (!isInView) return;
+    if (prefersReducedMotion) {
+      setCount(end);
+      return;
     }
-  }, [isInView, end, duration, hasStarted]);
 
-  return { ref, count, display: `${prefix}${count}${suffix}` };
+    let frame = 0;
+    const startTime = performance.now();
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      setCount(Math.round(end * easeOutCubic(progress)));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [isInView, end, duration, prefersReducedMotion]);
+
+  return { ref, count };
 }

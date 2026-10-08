@@ -17,7 +17,7 @@ No cubre: infraestructura de hosting del cliente final de Evoltica (eso es conte
 - Usa `next/image` para cualquier imagen nueva (no `<img>` plano) para aprovechar optimización automática y lazy loading.
 - Mantén los componentes como Server Components por defecto; solo agrega `"use client"` en el componente más pequeño posible que realmente necesite interactividad, no en su ancestro completo.
 - Evita añadir librerías pesadas de animación/UI adicionales; Framer Motion ya cubre las necesidades del sitio y cada dependencia nueva impacta el bundle de un sitio que debe cargar rápido en el primer contacto (LCP).
-- Ten cuidado con los efectos decorativos pesados (blurs grandes, `backdrop-filter`, partículas animadas como en `Hero.tsx`): son aceptables en cantidades ya presentes, pero no los multipliques sin medir el impacto en rendimiento (especialmente en móviles de gama baja).
+- Ten cuidado con los efectos decorativos pesados (blurs grandes, `backdrop-filter`, el diagrama animado de `HeroVisual.tsx`): son aceptables en cantidades ya presentes, pero no los multipliques sin medir el impacto en rendimiento (especialmente en móviles de gama baja).
 - No agregues fuentes, scripts de terceros (analytics, chats, pixels) sin usar `next/font` o carga diferida (`next/script` con estrategia `lazyOnload`/`afterInteractive`), para no bloquear el render inicial.
 - Revisa el peso de imágenes subidas a `public/` (usa formatos modernos, comprime) antes de commitear assets nuevos.
 

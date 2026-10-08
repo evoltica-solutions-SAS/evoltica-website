@@ -1,228 +1,315 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { ArrowRight, ChevronDown, Menu, MessageCircle, X } from "lucide-react";
+import { cn, getWhatsAppUrl } from "@/lib/utils";
 import { Logo } from "@/components/layout/Logo";
-import { useSectionNav } from "@/hooks/useSectionNav";
+import { MAIN_NAV, PRIMARY_CTA, SITE } from "@/lib/site-config";
+import { SERVICES } from "@/lib/services-data";
 
-type NavLink =
-  | { href: string; label: string; type: "anchor" }
-  | { href: string; label: string; type: "route" };
+function isActivePath(pathname: string, href: string) {
+  return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+}
 
-const navLinks: NavLink[] = [
-  { href: "#sobre-nosotros", label: "Nosotros", type: "anchor" },
-  { href: "/servicios", label: "Servicios", type: "route" },
-  { href: "#tecnologias", label: "Tecnologías", type: "anchor" },
-  { href: "#enfoque", label: "Nuestro Enfoque", type: "anchor" },
-  { href: "#proceso", label: "Proceso", type: "anchor" },
-  { href: "#faq", label: "FAQ", type: "anchor" },
-];
+function ServicesMenu({ onNavigate }: { onNavigate: () => void }) {
+  return (
+    <div className="grid gap-2 p-3 lg:grid-cols-[1.6fr_1fr]">
+      <ul className="grid gap-1">
+        {SERVICES.map((service) => (
+          <li key={service.slug}>
+            <Link
+              href={`/servicios/${service.slug}`}
+              onClick={onNavigate}
+              className="group flex items-start gap-4 rounded-xl p-3 transition-colors hover:bg-white/[0.05]"
+            >
+              <span className="icon-tile h-10 w-10 shrink-0">
+                <service.icon className="h-[18px] w-[18px]" aria-hidden="true" />
+              </span>
+              <span>
+                <span className="flex items-center gap-2 text-sm font-semibold text-white">
+                  {service.title}
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400">
+                    {service.tag}
+                  </span>
+                </span>
+                <span className="mt-1 line-clamp-1 text-[13px] text-slate-400">{service.summary}</span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <div className="flex flex-col justify-between rounded-xl border border-white/[0.08] bg-ink-800 p-5">
+        <div>
+          <p className="eyebrow">¿Por dónde empezar?</p>
+          <p className="mt-4 text-sm leading-relaxed text-slate-300">
+            Todo proyecto inicia con una reunión de descubrimiento gratuita. Entendemos tu negocio antes de
+            proponer tecnología.
+          </p>
+        </div>
+        <div className="mt-6 flex flex-col gap-3">
+          <Link href={PRIMARY_CTA.href} onClick={onNavigate} className="btn-primary w-full !min-h-[2.75rem] text-sm">
+            {PRIMARY_CTA.label}
+          </Link>
+          <Link href="/servicios" onClick={onNavigate} className="link-arrow justify-center text-sm">
+            Ver todos los servicios <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Navbar() {
   const pathname = usePathname();
-  const { goToSection } = useSectionNav();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const servicesRef = useRef<HTMLLIElement>(null);
+  const servicesButtonRef = useRef<HTMLButtonElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { scrollY } = useScroll();
 
+  // Barra sólida al hacer scroll; se oculta al bajar y reaparece al subir.
+  useMotionValueEvent(scrollY, "change", (current) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    setIsScrolled(current > 24);
+    setIsHidden(current > 160 && current > previous && !isServicesOpen);
+  });
+
+  const closeAll = useCallback(() => {
+    setIsMenuOpen(false);
+    setIsServicesOpen(false);
+  }, []);
+
+  // Cierra los menús al cambiar de ruta.
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    closeAll();
+  }, [pathname, closeAll]);
 
-      if (pathname !== "/") return;
-
-      const sections = navLinks
-        .filter((link): link is Extract<NavLink, { type: "anchor" }> => link.type === "anchor")
-        .map((link) => link.href.replace("#", ""));
-      const current = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      if (current) setActiveSection(current);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [pathname]);
-
+  // Bloqueo de scroll del body con el menú móvil abierto.
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
   }, [isMenuOpen]);
 
-  const handleNavClick = (link: NavLink) => {
-    setIsMenuOpen(false);
-    if (link.type === "anchor") {
-      goToSection(link.href);
-    }
+  // Escape cierra cualquier menú y devuelve el foco a su disparador.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (isMenuOpen) {
+        setIsMenuOpen(false);
+        menuButtonRef.current?.focus();
+      } else if (isServicesOpen) {
+        setIsServicesOpen(false);
+        servicesButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isMenuOpen, isServicesOpen]);
+
+  // Clic fuera del menú de servicios.
+  useEffect(() => {
+    if (!isServicesOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (servicesRef.current && !servicesRef.current.contains(event.target as Node)) {
+        setIsServicesOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [isServicesOpen]);
+
+  const openServices = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setIsServicesOpen(true);
   };
+  const scheduleCloseServices = () => {
+    closeTimer.current = setTimeout(() => setIsServicesOpen(false), 160);
+  };
+
+  const solid = isScrolled || isServicesOpen;
 
   return (
     <>
       <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isScrolled
-            ? "bg-[#0B0F19]/90 backdrop-blur-xl border-b border-white/[0.06] shadow-[0_1px_0_0_rgba(255,255,255,0.06)]"
-            : "bg-transparent"
-        )}
+        initial={false}
+        animate={{ y: isHidden && !isMenuOpen ? "-120%" : 0 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4"
       >
-        <nav className="container-custom">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <Logo />
+        <nav
+          aria-label="Navegación principal"
+          className={cn(
+            "mx-auto flex h-16 max-w-site items-center justify-between rounded-2xl border px-4 transition-all duration-500 sm:px-5 lg:h-[4.5rem] lg:pl-6 lg:pr-3",
+            solid
+              ? "border-white/[0.09] bg-ink-900/80 shadow-nav backdrop-blur-xl"
+              : "border-transparent bg-transparent"
+          )}
+        >
+          <Logo priority />
 
-            {/* Desktop Nav */}
-            <ul className="hidden lg:flex items-center gap-1">
-              {navLinks.map((link) => {
-                const isActive =
-                  link.type === "route"
-                    ? pathname === link.href
-                    : pathname === "/" && activeSection === link.href.replace("#", "");
+          {/* Desktop */}
+          <ul className="hidden items-center gap-1 lg:flex">
+            {MAIN_NAV.map((item) => {
+              const active = isActivePath(pathname, item.href);
+              const linkClass = cn(
+                "relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[0.94rem] font-medium transition-colors",
+                active ? "text-white" : "text-slate-400 hover:text-white"
+              );
+
+              if (item.href === "/servicios") {
                 return (
-                  <li key={link.href}>
-                    {link.type === "route" ? (
-                      <Link
-                        href={link.href}
-                        className={cn(
-                          "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 inline-block",
-                          isActive
-                            ? "text-white bg-white/[0.08]"
-                            : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
+                  <li
+                    key={item.href}
+                    ref={servicesRef}
+                    className="relative"
+                    onMouseEnter={openServices}
+                    onMouseLeave={scheduleCloseServices}
+                  >
+                    <button
+                      ref={servicesButtonRef}
+                      type="button"
+                      aria-expanded={isServicesOpen}
+                      aria-controls="services-menu"
+                      onClick={() => setIsServicesOpen((open) => !open)}
+                      className={linkClass}
+                    >
+                      {item.label}
+                      <ChevronDown
+                        className={cn("h-4 w-4 transition-transform duration-300", isServicesOpen && "rotate-180")}
+                        aria-hidden="true"
+                      />
+                      {active && <span className="absolute inset-x-4 -bottom-0.5 h-px bg-primary" />}
+                    </button>
+                    <div className="pointer-events-none absolute left-1/2 top-full w-[760px] -translate-x-1/2 pt-4">
+                      <AnimatePresence>
+                        {isServicesOpen && (
+                          <motion.div
+                            id="services-menu"
+                            initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                            transition={{ type: "spring", damping: 28, stiffness: 300 }}
+                            className="pointer-events-auto overflow-hidden rounded-2xl border border-white/[0.09] bg-ink-900/95 shadow-nav backdrop-blur-xl"
+                          >
+                            <ServicesMenu onNavigate={closeAll} />
+                          </motion.div>
                         )}
-                      >
-                        {link.label}
-                      </Link>
-                    ) : (
-                      <button
-                        onClick={() => handleNavClick(link)}
-                        className={cn(
-                          "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                          isActive
-                            ? "text-white bg-white/[0.08]"
-                            : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
-                        )}
-                      >
-                        {link.label}
-                      </button>
-                    )}
+                      </AnimatePresence>
+                    </div>
                   </li>
                 );
-              })}
-            </ul>
+              }
 
-            {/* CTA */}
-            <div className="hidden lg:flex items-center gap-3">
-              <button
-                onClick={() => goToSection("#contacto")}
-                className="btn-primary text-sm py-2.5 px-5"
-              >
-                Solicitar Consultoría
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+              return (
+                <li key={item.href}>
+                  <Link href={item.href} className={linkClass} aria-current={active ? "page" : undefined}>
+                    {item.label}
+                    {active && <span className="absolute inset-x-4 -bottom-0.5 h-px bg-primary" />}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
 
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </button>
+          <div className="hidden lg:block">
+            <Link href={PRIMARY_CTA.href} className="btn-primary !min-h-[2.75rem] px-5 text-sm">
+              {PRIMARY_CTA.label}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
+
+          {/* Mobile trigger */}
+          <button
+            ref={menuButtonRef}
+            type="button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
+            aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            className="-mr-1 flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors hover:bg-white/[0.06] lg:hidden"
+          >
+            {isMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
+          </button>
         </nav>
       </motion.header>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed inset-0 z-40 lg:hidden"
+            id="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menú principal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[45] overflow-y-auto bg-ink-950/[0.98] backdrop-blur-xl lg:hidden"
           >
-            <div
-              className="absolute inset-0 bg-[#0B0F19]/80 backdrop-blur-xl"
-              onClick={() => setIsMenuOpen(false)}
-            />
-            <div className="absolute right-0 top-0 bottom-0 w-80 bg-[#0B0F19] border-l border-white/[0.08] flex flex-col">
-              <div className="flex items-center justify-between p-5 border-b border-white/[0.08]">
-                <span className="text-lg font-bold text-white">Menú</span>
-                <button
-                  onClick={() => setIsMenuOpen(false)}
-                  className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto py-6 px-4">
-                <ul className="space-y-1">
-                  {navLinks.map((link, index) => (
+            <div className="flex min-h-full flex-col px-5 pb-8 pt-28 sm:px-8">
+              <ul className="flex flex-col">
+                {MAIN_NAV.map((item, index) => {
+                  const active = isActivePath(pathname, item.href);
+                  return (
                     <motion.li
-                      key={link.href}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
+                      key={item.href}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05 + index * 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      className="border-b border-white/[0.08]"
                     >
-                      {link.type === "route" ? (
-                        <Link
-                          href={link.href}
-                          onClick={() => setIsMenuOpen(false)}
-                          className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors text-left"
-                        >
-                          {link.label}
-                          <ChevronRight className="w-4 h-4 text-slate-600" />
-                        </Link>
-                      ) : (
-                        <button
-                          onClick={() => handleNavClick(link)}
-                          className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors text-left"
-                        >
-                          {link.label}
-                          <ChevronRight className="w-4 h-4 text-slate-600" />
-                        </button>
+                      <Link
+                        href={item.href}
+                        onClick={closeAll}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "flex items-center justify-between py-5 text-3xl font-semibold tracking-tight",
+                          active ? "text-primary-300" : "text-white"
+                        )}
+                      >
+                        {item.label}
+                        <ArrowRight className="h-5 w-5 text-slate-400" aria-hidden="true" />
+                      </Link>
+                      {item.href === "/servicios" && (
+                        <ul className="-mt-2 grid gap-1 pb-5">
+                          {SERVICES.map((service) => (
+                            <li key={service.slug}>
+                              <Link
+                                href={`/servicios/${service.slug}`}
+                                onClick={closeAll}
+                                className="flex items-center gap-3 py-1.5 text-base text-slate-400 hover:text-white"
+                              >
+                                <span className="font-mono text-xs text-primary-400">{service.number}</span>
+                                {service.title}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
                       )}
                     </motion.li>
-                  ))}
-                </ul>
-              </div>
+                  );
+                })}
+              </ul>
 
-              <div className="p-4 border-t border-white/[0.08]">
-                <button
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    goToSection("#contacto");
-                  }}
-                  className="btn-primary w-full justify-center"
-                >
-                  Solicitar Consultoría
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+              <div className="mt-auto flex flex-col gap-3 pt-10">
+                <Link href={PRIMARY_CTA.href} onClick={closeAll} className="btn-primary w-full">
+                  {PRIMARY_CTA.label}
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="btn-secondary w-full">
+                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  WhatsApp {SITE.phoneDisplay}
+                </a>
               </div>
             </div>
           </motion.div>

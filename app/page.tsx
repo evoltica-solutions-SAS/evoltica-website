@@ -1,29 +1,34 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/sections/Hero";
-import { About } from "@/components/sections/About";
-import { Services } from "@/components/sections/Services";
-import { Benefits } from "@/components/sections/Benefits";
-import { Process } from "@/components/sections/Process";
-import { Technologies } from "@/components/sections/Technologies";
-import { OurApproach } from "@/components/sections/OurApproach";
-import { Trust } from "@/components/sections/Trust";
-import { FAQ } from "@/components/sections/FAQ";
-import { Contact } from "@/components/sections/Contact";
-import { HashScrollOnMount } from "@/components/layout/HashScrollOnMount";
+import { PlatformsStrip } from "@/components/sections/PlatformsStrip";
+import { Manifesto } from "@/components/sections/Manifesto";
+import { ServicesIndex } from "@/components/sections/ServicesIndex";
+import { Differentiators } from "@/components/sections/Differentiators";
+import { EngagementTimeline } from "@/components/sections/EngagementTimeline";
+import { Capabilities } from "@/components/sections/Capabilities";
+import { Commitments } from "@/components/sections/Commitments";
+import { CasesPreview } from "@/components/sections/CasesPreview";
+import { FaqSection } from "@/components/sections/FaqSection";
+import { ContactSection } from "@/components/sections/ContactSection";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (
     <>
-      <HashScrollOnMount />
       <Hero />
-      <About />
-      <Services />
-      <Benefits />
-      <Process />
-      <Technologies />
-      <OurApproach />
-      <Trust />
-      <FAQ />
-      <Contact />
+      <PlatformsStrip />
+      <Manifesto />
+      <ServicesIndex />
+      <Differentiators />
+      <EngagementTimeline />
+      <Capabilities />
+      <Commitments />
+      <CasesPreview />
+      <FaqSection />
+      <ContactSection />
     </>
   );
 }

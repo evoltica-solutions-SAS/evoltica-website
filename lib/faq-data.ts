@@ -1,12 +1,18 @@
-"use client";
+/**
+ * Preguntas frecuentes — contenido heredado sin cambios de la versión anterior.
+ *
+ * TODO: INFORMACIÓN PENDIENTE DE EVOLTICA — validar con el negocio las
+ * afirmaciones comerciales de estas respuestas (rangos de precio, planes de
+ * soporte, garantía de 30 días, integraciones citadas, países atendidos).
+ * BUSINESS_CONTEXT.md indica que el sitio "no publica precios", lo que
+ * contradice la respuesta sobre costos.
+ */
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
-import { SectionLabel } from "@/components/ui/SectionLabel";
-import { fadeInUp, staggerContainer } from "@/hooks/useScrollAnimation";
-
-const faqs = [
+export const FAQS: FaqItem[] = [
   {
     question:
       "¿Cuánto tiempo tarda en desarrollarse un proyecto de software empresarial?",
@@ -62,140 +68,3 @@ const faqs = [
       "El proceso comienza con una consultoría inicial gratuita de 60 minutos donde conversamos sobre tu empresa, tus desafíos actuales y tus objetivos de negocio. No necesitas tener todo claro de antemano, nosotros hacemos las preguntas correctas. A partir de esa sesión, en los siguientes 5 días hábiles preparamos una propuesta técnica y económica detallada sin costo ni compromiso. Puedes agendar directamente por WhatsApp o completando el formulario de contacto.",
   },
 ];
-
-function FaqItem({
-  faq,
-  index,
-  isOpen,
-  onToggle,
-}: {
-  faq: (typeof faqs)[0];
-  index: number;
-  isOpen: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <motion.div
-      variants={fadeInUp}
-      className={`border rounded-xl overflow-hidden transition-all duration-200 ${
-        isOpen
-          ? "border-primary/30 bg-primary/[0.04]"
-          : "border-white/[0.07] bg-white/[0.02] hover:border-white/[0.12]"
-      }`}
-    >
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center justify-between gap-4 p-5 text-left"
-        aria-expanded={isOpen}
-      >
-        <div className="flex items-start gap-3">
-          <span className="shrink-0 text-xs font-mono font-bold text-primary-400 mt-0.5">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          <span
-            className={`text-sm font-semibold transition-colors ${
-              isOpen ? "text-white" : "text-slate-300"
-            }`}
-          >
-            {faq.question}
-          </span>
-        </div>
-        <div
-          className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-            isOpen ? "bg-primary text-[#04160D]" : "bg-white/[0.06] text-slate-400"
-          }`}
-        >
-          {isOpen ? (
-            <Minus className="w-3 h-3" />
-          ) : (
-            <Plus className="w-3 h-3" />
-          )}
-        </div>
-      </button>
-
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="px-5 pb-5 pl-14">
-              <p className="text-sm text-slate-400 leading-relaxed">
-                {faq.answer}
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
-export function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-
-  const handleToggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
-  return (
-    <section id="faq" className="relative section-padding">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0D1220] to-[#0B0F19]" />
-
-      <div className="container-custom relative">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-        >
-          {/* Header */}
-          <motion.div variants={fadeInUp} className="text-center mb-12">
-            <SectionLabel>FAQ</SectionLabel>
-            <h2 className="text-3xl lg:text-5xl font-bold text-white mt-4 mb-4 tracking-tight">
-              Preguntas frecuentes
-            </h2>
-            <p className="text-slate-400 text-lg max-w-xl mx-auto">
-              Todo lo que necesitas saber antes de comenzar tu proyecto de
-              transformación digital.
-            </p>
-          </motion.div>
-
-          {/* FAQ list */}
-          <div className="max-w-3xl mx-auto space-y-3">
-            {faqs.map((faq, index) => (
-              <FaqItem
-                key={index}
-                faq={faq}
-                index={index}
-                isOpen={openIndex === index}
-                onToggle={() => handleToggle(index)}
-              />
-            ))}
-          </div>
-
-          {/* Bottom CTA */}
-          <motion.div variants={fadeInUp} className="text-center mt-12">
-            <p className="text-slate-500 text-sm mb-4">
-              ¿No encontraste lo que buscabas?
-            </p>
-            <button
-              onClick={() => {
-                const el = document.querySelector("#contacto");
-                if (el) {
-                  const top = el.getBoundingClientRect().top + window.scrollY - 80;
-                  window.scrollTo({ top, behavior: "smooth" });
-                }
-              }}
-              className="btn-secondary text-sm"
-            >
-              Envíanos tu pregunta
-            </button>
-          </motion.div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}

@@ -1,213 +1,109 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ChevronRight, ArrowDown, Sparkles } from "lucide-react";
-import { useCounter } from "@/hooks/useCounter";
+import { Fragment, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Check } from "lucide-react";
+import { ButtonLink } from "@/components/ui/ButtonLink";
+import { HeroVisual } from "@/components/sections/HeroVisual";
+import { PRIMARY_CTA, SITE } from "@/lib/site-config";
+import { cn } from "@/lib/utils";
 
-const kpis = [
-  { value: 5, prefix: "", suffix: "", label: "Servicios", sublabel: "líneas integrales" },
-  { value: 24, prefix: "", suffix: "/7", label: "Soporte", sublabel: "monitoreo continuo" },
-  { value: 100, prefix: "", suffix: "%", label: "Gratuita", sublabel: "consultoría inicial" },
-  { value: 4, prefix: "", suffix: "h", label: "Respuesta", sublabel: "tiempo máximo hábil" },
+// Titular por palabras; `accent` aplica el degradado de marca.
+const HEADLINE: { word: string; accent?: boolean }[] = [
+  { word: "Optimizamos" },
+  { word: "tu" },
+  { word: "operación." },
+  { word: "Y", accent: true },
+  { word: "nos", accent: true },
+  { word: "quedamos", accent: true },
+  { word: "para" },
+  { word: "sostenerla." },
 ];
 
-function KpiCard({
-  value,
-  prefix,
-  suffix,
-  label,
-  sublabel,
-  delay,
-}: {
-  value: number;
-  prefix: string;
-  suffix: string;
-  label: string;
-  sublabel: string;
-  delay: number;
-}) {
-  const { ref, count } = useCounter(value, 2200);
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="flex flex-col items-center p-4 rounded-2xl glass border border-white/[0.08] hover:border-primary/30 transition-all group"
-    >
-      <span className="text-2xl lg:text-3xl font-black text-white tracking-tight group-hover:text-primary-300 transition-colors">
-        {prefix}
-        {suffix === "/7" ? (suffix === "/7" && count >= value ? "24" : count) : count}
-        {suffix}
-      </span>
-      <span className="text-sm font-semibold text-white mt-1">{label}</span>
-      <span className="text-xs text-slate-500 mt-0.5">{sublabel}</span>
-    </motion.div>
-  );
-}
+const PROOF_POINTS = [
+  "Consultoría inicial gratuita",
+  `Respuesta en menos de ${SITE.responseTime}`,
+  "Odoo como plataforma ERP principal",
+];
 
 export function Hero() {
-  const handleNavClick = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      const offset = 80;
-      const top =
-        element.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: "smooth" });
-    }
-  };
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
+  const visualY = useTransform(scrollYProgress, [0, 1], [0, 90]);
+  const visualOpacity = useTransform(scrollYProgress, [0.55, 1], [1, 0.25]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background layers */}
-      <div className="absolute inset-0 bg-gradient-hero" />
-      <div className="absolute inset-0 grid-bg opacity-50" />
+    <section
+      ref={sectionRef}
+      className="relative flex min-h-[100svh] items-center overflow-hidden pb-16 pt-28 lg:pb-24 lg:pt-32"
+      aria-labelledby="hero-title"
+    >
+      <div className="absolute inset-0 bg-gradient-hero" aria-hidden="true" />
+      <div className="mask-fade-b absolute inset-0 grid-bg" aria-hidden="true" />
 
-      {/* Orbs */}
-      <div className="absolute top-1/4 -left-40 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse-slow" />
-      <div className="absolute bottom-1/4 -right-40 w-80 h-80 bg-accent/15 rounded-full blur-3xl animate-pulse-slow animation-delay-300" />
-      <div className="absolute top-3/4 left-1/3 w-60 h-60 bg-secondary/10 rounded-full blur-3xl animate-pulse-slow animation-delay-200" />
-
-      {/* Floating particles */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 rounded-full bg-primary/60"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: [0, 1, 0],
-            y: [-20, -80, -20],
-            x: [0, (i % 2 === 0 ? 1 : -1) * 20, 0],
-          }}
-          transition={{
-            duration: 4 + i,
-            repeat: Infinity,
-            delay: i * 0.8,
-            ease: "easeInOut",
-          }}
-          style={{
-            left: `${15 + i * 14}%`,
-            top: `${60 + (i % 3) * 10}%`,
-          }}
-        />
-      ))}
-
-      <div className="container-custom relative z-10 text-center py-16 lg:py-24">
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-primary/10 border border-primary/25 text-primary-300 text-sm font-medium"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          Transformamos procesos. Impulsamos crecimiento.
-          <ChevronRight className="w-3.5 h-3.5" />
-        </motion.div>
-
-        {/* Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight leading-[1.05] mb-6 max-w-4xl mx-auto"
-        >
-          <span className="text-white">Impulsamos la</span>
-          <br />
-          <span className="relative inline-block">
-            <span className="gradient-text-blue">evolución digital</span>
-            {/* Underline accent */}
-            <motion.span
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.8, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-accent origin-left"
-            />
-          </span>
-          <br />
-          <span className="text-white">de tu empresa</span>
-        </motion.h1>
-
-        {/* Subheadline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="text-lg lg:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed"
-        >
-          Consultoría empresarial,{" "}
-          <span className="text-slate-200 font-medium">
-            ERP y automatización, infraestructura, servicios administrados y
-            desarrollo
-          </span>{" "}
-          — el socio tecnológico que optimiza tu operación y se queda para
-          sostenerla.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
-        >
-          <button
-            onClick={() => handleNavClick("#contacto")}
-            className="btn-primary text-base px-7 py-3.5 group"
+      <div className="container-custom relative grid items-center gap-14 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
+        <div>
+          <p
+            className="animate-enter inline-flex items-center gap-2.5 rounded-full border border-white/[0.1] bg-white/[0.03] py-1.5 pl-2 pr-4 text-[13px] text-slate-300"
           >
-            Solicitar Consultoría
-            <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
-          <button
-            onClick={() => handleNavClick("#servicios")}
-            className="btn-secondary text-base px-7 py-3.5 group"
-          >
-            Ver Servicios
-            <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
-          </button>
-        </motion.div>
-
-        {/* KPIs grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-2xl mx-auto"
-        >
-          {kpis.map((kpi, i) => (
-            <KpiCard key={kpi.label} {...kpi} delay={0.6 + i * 0.1} />
-          ))}
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="flex flex-col items-center gap-2 mt-16"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-1 text-slate-600 hover:text-slate-400 transition-colors cursor-pointer"
-            onClick={() => handleNavClick("#sobre-nosotros")}
-          >
-            <span className="text-xs font-medium tracking-widest uppercase">
-              Explorar
+            <span className="rounded-full bg-primary/15 px-2 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wider text-primary-300">
+              Colombia
             </span>
-            <div className="w-5 h-8 border border-slate-700 rounded-full flex items-start justify-center pt-1.5">
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="w-1 h-2 bg-primary rounded-full"
-              />
-            </div>
-          </motion.div>
+            Consultoría · ERP · Cloud · Soporte
+          </p>
+
+          <h1 id="hero-title" className="mt-8 text-display-xl font-semibold text-white">
+            {HEADLINE.map(({ word, accent }, index) => (
+              <Fragment key={`${word}-${index}`}>
+                <span className="inline-block overflow-hidden pb-[0.08em] align-bottom">
+                  <span
+                    className={cn("inline-block animate-rise", accent && "gradient-text-blue")}
+                    style={{ animationDelay: `${0.05 + index * 0.05}s` }}
+                  >
+                    {word}
+                  </span>
+                </span>
+                {index < HEADLINE.length - 1 && " "}
+              </Fragment>
+            ))}
+          </h1>
+
+          <p
+            style={{ animationDelay: "0.4s" }}
+            className="animate-lift mt-8 max-w-xl text-lead text-slate-400 text-pretty"
+          >
+            Consultoría empresarial, ERP con Odoo, automatización, infraestructura cloud y soporte administrado
+            para PYMEs en Colombia. <span className="text-slate-200">Un solo socio tecnológico</span>, del
+            diagnóstico a la operación diaria.
+          </p>
+
+          <div
+            style={{ animationDelay: "0.5s" }}
+            className="animate-enter mt-10 flex flex-col gap-3 xs:flex-row"
+          >
+            <ButtonLink href={PRIMARY_CTA.href}>{PRIMARY_CTA.label}</ButtonLink>
+            <ButtonLink href="/servicios" variant="secondary">
+              Ver Servicios
+            </ButtonLink>
+          </div>
+
+          <ul
+            style={{ animationDelay: "0.65s" }}
+            className="animate-enter mt-12 flex flex-col gap-3 border-t border-white/[0.08] pt-8 sm:flex-row sm:flex-wrap sm:gap-x-8"
+          >
+            {PROOF_POINTS.map((point) => (
+              <li key={point} className="flex items-center gap-2.5 text-sm text-slate-300">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/15 text-primary-400">
+                  <Check className="h-3 w-3" aria-hidden="true" />
+                </span>
+                {point}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <motion.div style={{ y: visualY, opacity: visualOpacity }}>
+          <HeroVisual />
         </motion.div>
       </div>
     </section>

@@ -13,8 +13,8 @@ Brief condensado para tareas de experiencia de usuario, navegación o flujos de 
 
 ## Reglas mínimas a respetar
 
-- Navegación por ancla usa `useSectionNav`, no `scrollIntoView` ad-hoc.
-- Cualquier sección nueva navegable por ancla se registra en `navLinks` de `Navbar.tsx`.
+- Navegación con `next/link` hacia rutas de `MAIN_NAV`; anclas resueltas por CSS (`scroll-padding-top`), sin `scrollIntoView` ad-hoc.
+- Cualquier página nueva de navegación principal se registra en `MAIN_NAV` (`lib/site-config.ts`).
 - Overlays/drawers nuevos replican el scroll-lock del menú móvil existente.
 - Estados de carga y feedback visibles en toda acción asíncrona.
 - Mobile-first: valida el layout en viewport móvil antes de darlo por bueno.

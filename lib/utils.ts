@@ -1,5 +1,15 @@
 import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
+
+// Registra la escala tipográfica propia (tailwind.config.ts → fontSize) para que
+// tailwind-merge no la confunda con colores (`text-lead` vs `text-slate-400`).
+const twMerge = extendTailwindMerge({
+  extend: {
+    classGroups: {
+      "font-size": [{ text: ["display-xl", "display-lg", "display-md", "display-sm", "lead"] }],
+    },
+  },
+});
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

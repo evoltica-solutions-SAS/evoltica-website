@@ -1,6 +1,6 @@
 # Roadmap (24 meses)
 
-> **Versión**: 1.0 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -26,7 +26,7 @@ No cubre: el detalle de implementación de cada fase (eso se documenta cuando la
 ### Fase 0 — Landing
 **Estado: completada, en producción.**
 - **Objetivo**: comunicar la propuesta de valor de Evoltica y capturar leads calificados.
-- **Funcionalidades**: Hero, About, Benefits, Services (resumen), OurApproach, Process, Technologies, Trust, FAQ, Contact, WhatsApp flotante.
+- **Funcionalidades**: landing original de una página. Reconstruida el 2026-10-08 como sitio multipágina ([ADR-007](docs/decisions/ADR-007-Multi-Page-Site.md)): home con hero, servicios, diferenciadores, proceso, capacidades, compromisos, FAQ y contacto; `/nosotros`; `/contacto`; 404; WhatsApp flotante.
 - **Prioridad**: Crítica.
 - **Dependencias**: ninguna (es la base del sitio).
 - **Criterios de terminado**: ✅ desplegada, ✅ formulario de contacto funcional, ✅ responsive, ✅ SEO básico implementado.
@@ -34,7 +34,7 @@ No cubre: el detalle de implementación de cada fase (eso se documenta cuando la
 ### Fase 1 — Servicios
 **Estado: completada, en producción.**
 - **Objetivo**: dar detalle profundo de las 5 líneas de servicio para capturar búsquedas específicas y educar al lead antes del contacto.
-- **Funcionalidades**: página `/servicios` con el detalle completo de cada `ServiceData` (`lib/services-data.ts`).
+- **Funcionalidades**: página `/servicios` (portafolio + metodología) y una página por servicio en `/servicios/[slug]` con el detalle completo de cada `ServiceData` (`lib/services-data.ts`).
 - **Prioridad**: Crítica.
 - **Dependencias**: Fase 0.
 - **Criterios de terminado**: ✅ una sección por servicio, ✅ coherente con el orden del embudo comercial ([BUSINESS_CONTEXT.md](BUSINESS_CONTEXT.md)), ✅ enlazada desde la navegación principal.
@@ -93,6 +93,7 @@ Antes de agregar superficie nueva, se consolida la base: seguridad, rendimiento,
 
 ### Fase 8 — Casos de éxito
 - **Objetivo**: aportar prueba social concreta al embudo comercial (hoy el sitio no muestra clientes reales ni resultados).
+- **Estado (2026-10-08)**: estructura lista — ruta `/casos-de-exito`, tipo `CaseStudy` y componentes (`lib/cases-data.ts`). Falta el contenido real autorizado; mientras tanto la página es `noindex` y la home oculta la sección.
 - **Funcionalidades**: sección/página de casos de éxito por línea de servicio, con métricas de impacto cuando el cliente lo autorice.
 - **Prioridad**: Alta.
 - **Dependencias**: autorización de clientes reales para publicar su caso (dependencia de negocio, no técnica); Fase 6 (Analytics) para medir su efecto en conversión.

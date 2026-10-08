@@ -1,6 +1,6 @@
 # Sistema de diseño
 
-> **Versión**: 1.0 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 2.0 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -16,110 +16,106 @@ No cubre: estructura de componentes React (ver [DEVELOPMENT_GUIDE.md](DEVELOPMEN
 
 El sistema de diseño vive en dos lugares, y solo en esos dos lugares: **`tailwind.config.ts`** (tokens) y **`app/globals.css`** (clases de componente reutilizables, dentro de `@layer components`). No se define estilo de marca directamente dentro de un componente de sección.
 
+## Dirección visual (v2, 2026-10)
+
+Oscuro, sobrio y editorial: casi monocromo (blanco sobre fondo profundo), **un solo acento dominante** (el verde de marca) y el degradado verde → turquesa → azul del logo reservado como "firma" (líneas de progreso, bordes destacados, palabras clave del hero). Tipografía display grande y ajustada, etiquetas en mono mayúscula, mucho espacio negativo y superficies con borde fino en vez de brillos. El glassmorphism se mantiene solo donde aporta (navbar, tarjetas flotantes). Ver contexto en [ADR-007](docs/decisions/ADR-007-Multi-Page-Site.md).
+
 ## Paleta de marca
 
-Definida en `tailwind.config.ts` → `theme.extend.colors`. Cada color tiene su escala completa 50–950; usa el tono de la escala que corresponda al contraste necesario, no un valor arbitrario fuera de la paleta.
+Definida en `tailwind.config.ts` → `theme.extend.colors`. La paleta de marca no cambia respecto de [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md).
 
 | Token | Valor base | Uso |
 |---|---|---|
-| `primary` | `#12D56F` (verde) | Color dominante, extraído del logo oficial. CTAs principales, acentos de éxito/foco. |
-| `secondary` | `#14A4BC` (turquesa) | Color secundario de marca. |
-| `accent` | `#0997D5` (azul) | Tercer color de marca. Reemplaza un acento morado anterior — ver [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md). Usado en gradientes y detalles. |
+| `primary` | `#12D56F` (verde) | Acento dominante: CTAs principales, foco, indicadores activos, íconos. |
+| `secondary` | `#14A4BC` (turquesa) | Segundo tono del degradado de marca; detalles puntuales. |
+| `accent` | `#0997D5` (azul) | Tercer tono del degradado de marca. |
 | `navy` | `#001E3D` | Profundidad, fondos y gradientes oscuros. |
 | `background` | `#0B0F19` | Fondo base del sitio (dark-only). |
-| `slate` | escala 400–950 | Neutros de texto secundario y fondos intermedios. |
+| `ink` | `950 #070A11` · `900 #080B12` · `800 #0D1220` · `700 #121829` · `600 #1A2133` | Neutros de superficie derivados del fondo: footer, bandas, tarjetas elevadas. Reemplazan los hex sueltos (`#0D1220`, `#080B12`) que antes vivían en los componentes. |
+| `slate` | escala 200–950 | Texto secundario y bordes. |
 
-**Ejemplo correcto:**
+**Contraste de texto**: `text-slate-400` es el gris mínimo para texto de lectura o etiquetas pequeñas. `text-slate-500` solo se usa en titulares display (texto grande, ratio ≥ 3:1) como segunda frase atenuada (`<span className="text-slate-500">`).
+
+**Ejemplo correcto / incorrecto:**
 ```tsx
-<span className="text-primary-300">Texto destacado</span>
-<div className="bg-navy-900/50">…</div>
+<span className="text-primary-300">Texto destacado</span>     {/* ✅ */}
+<div className="bg-ink-800">…</div>                            {/* ✅ */}
+<span className="text-[#12D56F]">Texto destacado</span>       {/* ❌ arbitrario */}
+<div className="bg-blue-900/50">…</div>                         {/* ❌ paleta genérica */}
 ```
 
-**Ejemplo incorrecto** (no usar colores arbitrarios ni la paleta genérica de Tailwind):
-```tsx
-<span className="text-[#12D56F]">Texto destacado</span>  {/* ❌ arbitrario */}
-<div className="bg-blue-900/50">…</div>                    {/* ❌ paleta genérica, no es la marca */}
-```
-
-Si hace falta un tono nuevo, agrégalo a la paleta de marca en `tailwind.config.ts`; no lo hardcodees en un componente.
+Excepción documentada: el botón flotante de WhatsApp usa el verde oficial de WhatsApp (`#25D366`) porque representa la marca de un tercero.
 
 ## Tipografía
 
-- **Sans**: `Inter` — texto general y UI. Pesos 300–900 ya cargados vía Google Fonts en `globals.css`.
-- **Mono**: `JetBrains Mono` / `Fira Code` — usado en `tech-badge` para nombres de tecnologías.
+- **Sans**: `Inter` — texto general, UI y titulares.
+- **Mono**: `JetBrains Mono` — etiquetas (`eyebrow`), numeración, badges de tecnología.
 
-No agregues otra familia tipográfica sin actualizar este documento y `tailwind.config.ts` (`theme.extend.fontFamily`).
+Ambas se cargan con **`next/font/google`** en `app/layout.tsx` (auto-alojadas, `display: swap`) y se exponen como variables CSS `--font-inter` / `--font-mono`, que consume `fontFamily` en `tailwind.config.ts`. No agregues otra familia sin autorización (ver [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md)).
 
-**Escalado responsivo**: sigue la progresión ya usada en encabezados — `text-4xl sm:text-5xl lg:text-6xl xl:text-7xl` para H1 (ver `Hero.tsx`), escalas equivalentes más pequeñas para H2/H3. No introduzcas una escala tipográfica paralela.
+**Escala tipográfica** (`tailwind.config.ts` → `fontSize`, fluida con `clamp`, tracking negativo incluido):
 
-## Lenguaje visual
+| Clase | Uso |
+|---|---|
+| `text-display-xl` | `h1` de hero y de páginas internas |
+| `text-display-lg` | `h2` de sección principal |
+| `text-display-md` | `h2` de sección secundaria, manifiesto |
+| `text-display-sm` | Títulos de ítems grandes (índice de servicios, footer) |
+| `text-lead` | Párrafo introductorio bajo un titular |
 
-Estética "glassmorphism" oscura:
-
-- Fondos `glass` / `glass-card` (blur + borde translúcido).
-- `gradient-hero` y orbes difuminados de fondo (`blur-3xl`, `animate-pulse-slow`).
-- Texto con gradiente de marca: `gradient-text`, `gradient-text-blue`, `gradient-text-teal`.
-- Bordes con gradiente: `border-gradient`.
-- Micro-glow en hover de elementos de marca: `shadow-glow`, `shadow-glow-teal`, `shadow-glow-blue`, clases utilitarias `glow-green`/`glow-teal`/`glow-blue`.
-
-Estos patrones ya están encapsulados como clases de componente en `globals.css`; **reutilízalos en vez de recrearlos** con utilidades sueltas.
+`cn()` (`lib/utils.ts`) registra esta escala en `tailwind-merge`; si agregas un tamaño nuevo a `fontSize`, agrégalo también ahí o `cn` lo descartará al combinarlo con un color (`text-lead text-slate-400`).
 
 ## Clases de componente reutilizables (`globals.css` → `@layer components`)
 
 | Clase | Uso |
 |---|---|
-| `btn-primary` | CTA principal (fondo degradado verde, texto oscuro) |
-| `btn-secondary` | CTA secundario (borde translúcido, fondo transparente) |
-| `glass` / `glass-card` | Superficies con efecto vidrio esmerilado |
-| `gradient-text` / `gradient-text-blue` / `gradient-text-teal` | Texto con gradiente de marca |
-| `section-label` | Etiqueta pequeña de sección (uppercase, borde verde) |
-| `container-custom` | Ancho máximo y padding responsivo del contenido |
-| `section-padding` | Padding vertical estándar de sección |
-| `input-field` | Campos de formulario |
-| `tech-badge` | Badges de tecnología (fuente mono) |
-| `grid-bg` / `noise-bg` | Texturas de fondo decorativas |
+| `container-custom` | Ancho máximo (1360px) y gutters responsivos (20/32/48px) |
+| `section-padding` | Padding vertical estándar de sección (88px → 136px en `lg`) |
+| `eyebrow` (alias `section-label`) | Etiqueta mono mayúscula con cuadro verde; encabeza cada sección |
+| `btn-primary` / `btn-secondary` | CTA principal (verde sólido) / secundario (borde fino). Píldora, alto mínimo 48px |
+| `link-arrow` | Enlace de texto con flecha animada |
+| `card` / `card-interactive` | Superficie con borde fino; `card-interactive` añade hover (borde verde + elevación) |
+| `glass` / `glass-card` | Superficies translúcidas con blur (navbar, flotantes) |
+| `border-gradient` | Borde con el degradado de marca (destacar un elemento, p. ej. Odoo) |
+| `icon-tile` | Contenedor de ícono lucide (verde translúcido) |
+| `tech-badge` | Badge mono para nombres de tecnologías |
+| `gradient-text-blue` / `gradient-text` / `gradient-text-teal` | Texto con degradado (uso puntual: palabras clave del hero) |
+| `grid-bg` + `mask-fade-b` / `mask-fade-x` | Retícula de fondo y máscaras de desvanecido |
+| `input-field` / `select-field` | Campos de formulario (estado de error vía `aria-invalid`) |
 
-No reescribas el equivalente de estas clases con utilidades de Tailwind sueltas: si una clase no cubre exactamente lo que necesitas, extiéndela en `globals.css`, no la dupliques ad-hoc en el componente.
+Si una clase no cubre lo que necesitas, extiéndela en `globals.css`; no la dupliques con utilidades sueltas en el componente.
 
 ## Iconografía
 
-Exclusivamente **`lucide-react`**. Tamaños típicos `w-4 h-4` a `w-6 h-6` según densidad. No mezcles otra librería de íconos ni SVGs sueltos, salvo casos ya establecidos por necesidad de marca (ej. el ícono oficial de WhatsApp en `components/ui/WhatsAppButton.tsx`, que debe usar el SVG de marca de WhatsApp, no un ícono genérico de chat).
+Exclusivamente **`lucide-react`**, con `aria-hidden="true"` cuando es decorativa. Tamaños típicos `h-4 w-4` a `h-6 w-6`. Los ítems de servicio en `lib/services-data.ts` usan íconos lucide (ya no emojis). Única excepción: el SVG oficial de WhatsApp en `components/ui/WhatsAppButton.tsx`.
 
-## Motion (Framer Motion)
+## Motion
 
-Tres arquetipos de animación ya establecidos. Cualquier animación nueva debe encajar en uno de estos tres, no inventar una curva/duración nueva sin razón:
+Framer Motion con `MotionConfig reducedMotion="user"` global (`components/layout/MotionProvider.tsx`) y regla CSS de `prefers-reduced-motion` en `globals.css`. Arquetipos permitidos:
 
-1. **Entradas de sección**: `opacity`/`y` de 20–30px, `ease: [0.22, 1, 0.36, 1]`, duración 0.5–0.8s, activadas por scroll vía `useScrollAnimation` (`hooks/useScrollAnimation.ts`). Reutiliza las variantes ya exportadas (`fadeInUp`, `fadeInLeft`, `fadeInRight`, `scaleIn`, `staggerContainer`) en vez de declarar variantes equivalentes nuevas.
-2. **Micro-interacciones** (menús, tooltips, bubbles): `type: "spring", damping: 20-30, stiffness: 300`.
-3. **Loops decorativos** (orbes, partículas, pulsos): `repeat: Infinity`, `ease: "easeInOut"`, duración 2.5–6s.
+1. **Entrada de sección** (scroll): `opacity` + `y` 20–30px, `ease: [0.22, 1, 0.36, 1]`, 0.5–0.8s. Usa `Reveal`, `RevealGroup`/`RevealItem` (`components/ui/Reveal.tsx`), que reutilizan las variantes de `hooks/useScrollAnimation.ts`.
+2. **Entrada above-the-fold** (CSS, sin JavaScript): clases `animate-rise` (palabras del titular), `animate-lift` (h1 y lead, solo transform — nunca opacidad, para no retrasar el LCP) y `animate-enter` (elementos secundarios). Se usan en el hero y en `PageHero`.
+3. **Micro-interacciones** (menús, burbujas): `type: "spring", damping: 20–30, stiffness: 300`.
+4. **Ligadas al scroll**: progreso de línea de tiempo (`useScroll` + `useSpring`), parallax suave del visual del hero, palabras que se "encienden" en el manifiesto. Máximo un efecto de este tipo por sección.
+5. **Loops decorativos**: `animate-marquee`, `animate-spin-slow`, `animate-dash-flow`, `animate-pulse-soft` (CSS) o Framer con `repeat: Infinity, ease: "easeInOut"`, 2.5–6s.
 
-```tsx
-// Patrón 1: entrada de sección
-<motion.div
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-/>
-```
-
-Ver también [UX_GUIDE.md § Reducción de movimiento](UX_GUIDE.md#accesibilidad) para el manejo de `prefers-reduced-motion`.
+Regla de oro: **Framer Motion sobreescribe `transform`**. Nunca pongas clases `translate-*`/`scale-*` de Tailwind en el mismo elemento que anima Framer; posiciona con un contenedor externo y anima el interno.
 
 ## Logo y marca
 
-El logo vive en `public/brand/` y se renderiza vía `components/layout/Logo.tsx`. Es la única fuente autorizada del isotipo/logotipo — no lo recrees con texto + CSS en otro componente. Cambios al logo o a la paleta de marca requieren autorización explícita (ver [AI_GUIDELINES.md § Qué nunca modificar sin autorización](AI_GUIDELINES.md#qué-nunca-modificar-sin-autorización) y [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md)).
+El logo vive en `public/brand/logo.png` y se renderiza vía `components/layout/Logo.tsx`. El PNG original tiene margen transparente superior; `Logo` lo encuadra con CSS (`scale`/`translate`) sin alterar el archivo. Cambios al logo o a la paleta requieren autorización explícita (ver [AI_GUIDELINES.md § 12](AI_GUIDELINES.md#12-qué-nunca-modificar-sin-autorización) y [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md)).
 
 ## Reglas de uso de Tailwind
 
-- Usa exclusivamente los tokens de marca (`primary`, `secondary`, `accent`, `navy`, `background`, `slate`) en vez de colores arbitrarios (`bg-[#123456]`) o la paleta genérica de Tailwind (`bg-blue-500`).
-- Reutiliza las clases de componente de la tabla anterior en vez de reescribir sus estilos con utilidades sueltas.
-- Usa el helper `cn()` de `lib/utils.ts` (clsx + tailwind-merge) para componer clases condicionales; no concatenes strings de clases manualmente.
-- **Mobile-first siempre**: escribe el estilo base para móvil y añade breakpoints (`sm:`, `lg:`, `xl:`) para escalar hacia arriba.
-- El sitio es **dark-only** (`className="dark"` fijo en `<html>` de `app/layout.tsx`). No agregues variantes de light mode ni un toggle de tema sin que se pida explícitamente — este es un cambio de producto, no solo de estilo (coordinar con [ROADMAP.md](ROADMAP.md) si se plantea a futuro).
-- No uses estilos inline (`style={{...}}`) salvo para valores verdaderamente dinámicos que Tailwind no puede expresar (como los `left`/`top` calculados por índice en las partículas de `Hero.tsx`).
+- Usa exclusivamente los tokens de marca (`primary`, `secondary`, `accent`, `navy`, `ink`, `background`, `slate`).
+- Reutiliza las clases de componente de la tabla anterior.
+- Usa `cn()` de `lib/utils.ts` para clases condicionales.
+- **Mobile-first siempre**.
+- El sitio es **dark-only** (`className="dark"` fijo en `<html>`). No agregues light mode sin que se pida explícitamente.
+- Estilos inline (`style={{...}}`) solo para valores dinámicos (posiciones calculadas del visual del hero, `animationDelay` escalonado).
 
 ## Referencias cruzadas
 
 - [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md) — reglas de componentes que consumen este sistema.
-- [UX_GUIDE.md](UX_GUIDE.md) — cómo se aplican estos patrones a la experiencia de usuario y accesibilidad.
-- [docs/decisions/ADR-003-Why-Tailwind.md](docs/decisions/ADR-003-Why-Tailwind.md) — por qué Tailwind es la base de estilos.
-- [docs/decisions/ADR-005-Brand-Guidelines.md](docs/decisions/ADR-005-Brand-Guidelines.md) — decisión e historia de la paleta e identidad visual.
+- [UX_GUIDE.md](UX_GUIDE.md) — aplicación a la experiencia de usuario y accesibilidad.
+- [docs/decisions/ADR-003-Why-Tailwind.md](docs/decisions/ADR-003-Why-Tailwind.md) · [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md) · [ADR-007](docs/decisions/ADR-007-Multi-Page-Site.md)

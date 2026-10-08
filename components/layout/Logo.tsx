@@ -1,47 +1,39 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
   className?: string;
   size?: number;
   showWordmark?: boolean;
+  priority?: boolean;
 }
 
-export function Logo({ className, size = 34, showWordmark = true }: LogoProps) {
-  const pathname = usePathname();
-
-  const handleClick = (e: React.MouseEvent) => {
-    if (pathname === "/") {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
+/**
+ * Única fuente autorizada del logo (public/brand/logo.png). El PNG original
+ * tiene margen transparente superior; se encuadra con CSS sin alterar el archivo.
+ */
+export function Logo({ className, size = 36, showWordmark = true, priority = false }: LogoProps) {
   return (
     <Link
       href="/"
-      onClick={handleClick}
-      className={cn("flex items-center gap-2.5 group shrink-0", className)}
+      className={cn("group flex shrink-0 items-center gap-2.5", className)}
       aria-label="EVOLTICA SOLUTIONS — Inicio"
     >
-      <span className="relative shrink-0 block" style={{ width: size, height: size }}>
+      <span className="relative block shrink-0 overflow-hidden" style={{ width: size, height: size }}>
         <Image
           src="/brand/logo.png"
-          alt="EVOLTICA SOLUTIONS"
+          alt=""
           fill
-          sizes={`${size}px`}
-          className="object-contain transition-transform duration-300 group-hover:scale-110"
-          priority
+          sizes={`${Math.round(size * 1.4)}px`}
+          className="origin-center -translate-y-[9%] scale-[1.32] object-contain transition-transform duration-500 group-hover:scale-[1.4]"
+          priority={priority}
         />
       </span>
       {showWordmark && (
-        <span className="text-lg font-bold tracking-tight leading-none">
+        <span className="text-[1.05rem] font-bold leading-none tracking-tight">
           <span className="text-white">EVOLTICA</span>
-          <span className="text-secondary-400 font-light"> SOLUTIONS</span>
+          <span className="font-light text-secondary-400"> SOLUTIONS</span>
         </span>
       )}
     </Link>

@@ -1,6 +1,6 @@
 # Changelog de arquitectura
 
-> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.2 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -21,6 +21,11 @@ No cubre: el detalle de cada decisión (contexto, alternativas, consecuencias) �
 ---
 
 ## Historial
+
+### 2026-10-08 — Sitio corporativo multipágina con contenido centralizado
+**Tipo**: Decisión de arquitectura de producto
+**ADR**: [ADR-007-Multi-Page-Site](docs/decisions/ADR-007-Multi-Page-Site.md) — `Accepted`
+**Resumen**: La landing de una página se reemplaza por un sitio multipágina (`/servicios/[slug]`, `/nosotros`, `/casos-de-exito`, `/contacto`) con contenido en `lib/`, sitemap generado (`app/sitemap.ts`) y fuentes vía `next/font`. Paleta, logo y tipografías de ADR-005 se conservan.
 
 ### 2026-07-07 — Adopción del sistema operativo de agentes de IA (workflows + agents)
 **Tipo**: Decisión de proceso permanente
@@ -68,6 +73,7 @@ No cubre: el detalle de cada decisión (contexto, alternativas, consecuencias) �
 | [ADR-004](docs/decisions/ADR-004-Why-Odoo.md) | Odoo como ERP principal | `Accepted` |
 | [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md) | Identidad visual de marca | `Accepted` |
 | [ADR-006](docs/decisions/ADR-006-AI-Operating-System.md) | Sistema operativo de agentes de IA (workflows + agents) | `Accepted` |
+| [ADR-007](docs/decisions/ADR-007-Multi-Page-Site.md) | Sitio corporativo multipágina con contenido en `lib/` | `Accepted` |
 
 ## Referencias cruzadas
 

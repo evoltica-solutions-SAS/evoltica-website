@@ -1,6 +1,6 @@
 # Contexto de negocio
 
-> **Versión**: 1.0 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -69,7 +69,7 @@ El sitio existe para mover al visitante por este embudo hasta el primer paso (ag
 ## KPIs de negocio que el sitio debe soportar
 
 - **Leads calificados** vía formulario de contacto (`app/api/contact/route.ts`) y botón de WhatsApp.
-- **Tiempo de respuesta comprometido**: "4 horas hábiles" (ver `Hero.tsx`, mensaje de éxito del formulario). Es una promesa pública al cliente, no un texto decorativo.
+- **Tiempo de respuesta comprometido**: "4 horas hábiles" (`SITE.responseTime` en `lib/site-config.ts`, usado en hero, formulario y CTAs; y el mensaje del endpoint `app/api/contact/route.ts`). Es una promesa pública al cliente, no un texto decorativo.
 - **Posicionamiento SEO local** en Colombia para búsquedas relacionadas con ERP/Odoo y transformación digital (detalle en [SEO_GUIDE.md](SEO_GUIDE.md)).
 
 ## Contenido comercial y legal sensible
@@ -79,7 +79,9 @@ Los siguientes elementos son **afirmaciones de la empresa hacia clientes reales*
 - Precios y tarifas (actualmente el sitio no publica precios; si se agregan, deben ser aprobados por el negocio).
 - Garantías y compromisos de servicio (SLA de mesa de ayuda, niveles de soporte 1/2/3).
 - Tiempos de respuesta comprometidos ("4h hábiles").
-- Razón social y datos legales en el footer y en el JSON-LD de `app/layout.tsx` (teléfono, email, dirección, redes sociales).
+- Razón social y datos legales en `lib/site-config.ts` (footer, contacto) y en el JSON-LD de `app/layout.tsx` (teléfono, email, dirección, redes sociales).
+- Compromisos públicos de servicio mostrados en la home (`COMMITMENTS` en `lib/company-data.ts`).
+- Casos de éxito (`lib/cases-data.ts`): solo con autorización escrita del cliente y cifras aprobadas por él.
 
 Ver también la lista consolidada en [AI_GUIDELINES.md § Qué nunca modificar sin autorización](AI_GUIDELINES.md#qué-nunca-modificar-sin-autorización).
 

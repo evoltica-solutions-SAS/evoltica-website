@@ -4,6 +4,10 @@ Allow: /
 # Disallow API routes
 Disallow: /api/
 
+# Portal de clientes y administración: privados (ADR-012)
+Disallow: /app/
+Disallow: /admin/
+
 # Sitemap
 Sitemap: https://evoltica.com.co/sitemap.xml
 

@@ -77,11 +77,17 @@ export function ContactForm({ className }: { className?: string }) {
     defaultValues: { name: "", company: "", email: "", phone: "", service: "", message: "" },
   });
 
-  // Preselecciona el servicio cuando se llega desde /contacto?servicio=<slug>.
+  // Preselecciona el servicio (/contacto?servicio=<slug>) y precarga el mensaje
+  // escrito en el campo del hero (/contacto?mensaje=...).
   useEffect(() => {
-    const slug = new URLSearchParams(window.location.search).get("servicio");
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get("servicio");
     if (slug && SERVICES.some((service) => service.slug === slug)) {
       setValue("service", slug);
+    }
+    const message = params.get("mensaje");
+    if (message) {
+      setValue("message", message.slice(0, 2000));
     }
   }, [setValue]);
 
@@ -125,7 +131,7 @@ export function ContactForm({ className }: { className?: string }) {
             className="py-10 text-center"
             role="status"
           >
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-primary/30 bg-primary/10">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center border border-primary/40">
               <CheckCircle2 className="h-8 w-8 text-primary-400" aria-hidden="true" />
             </div>
             <h3 className="text-2xl font-semibold text-white">¡Solicitud enviada!</h3>
@@ -276,7 +282,7 @@ export function ContactForm({ className }: { className?: string }) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-6 flex items-start gap-2.5 rounded-xl border border-red-500/30 bg-red-500/10 p-4"
+                  className="mt-6 flex items-start gap-2.5 border border-red-500/30 bg-red-500/10 p-4"
                   role="alert"
                 >
                   <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" aria-hidden="true" />

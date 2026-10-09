@@ -37,6 +37,7 @@ export interface NavItem {
 
 export const MAIN_NAV: NavItem[] = [
   { label: "Servicios", href: "/servicios" },
+  { label: "Soluciones", href: "/soluciones" },
   { label: "Nosotros", href: "/nosotros" },
   { label: "Casos de éxito", href: "/casos-de-exito" },
   { label: "Contacto", href: "/contacto" },

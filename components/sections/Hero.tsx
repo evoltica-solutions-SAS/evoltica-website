@@ -1,110 +1,123 @@
 "use client";
 
-import { Fragment, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Check } from "lucide-react";
-import { ButtonLink } from "@/components/ui/ButtonLink";
-import { HeroVisual } from "@/components/sections/HeroVisual";
-import { PRIMARY_CTA, SITE } from "@/lib/site-config";
-import { cn } from "@/lib/utils";
+import { useRef } from "react";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Trama } from "@/components/ui/Trama";
+import { HeroPrompt } from "@/components/ui/HeroPrompt";
+import { SERVICES } from "@/lib/services-data";
+import { BRAND_MEDIA } from "@/lib/media";
+import { SITE } from "@/lib/site-config";
 
-// Titular por palabras; `accent` aplica el degradado de marca.
-const HEADLINE: { word: string; accent?: boolean }[] = [
-  { word: "Optimizamos" },
-  { word: "tu" },
-  { word: "operación." },
-  { word: "Y", accent: true },
-  { word: "nos", accent: true },
-  { word: "quedamos", accent: true },
-  { word: "para" },
-  { word: "sostenerla." },
-];
+/** Retraso relativo a la apertura de la intro (0 s si la intro no corre en esta visita). */
+const at = (seconds: number): React.CSSProperties => ({
+  animationDelay: `calc(var(--intro-delay) + ${seconds}s)`,
+});
 
-const PROOF_POINTS = [
-  "Consultoría inicial gratuita",
-  `Respuesta en menos de ${SITE.responseTime}`,
-  "Odoo como plataforma ERP principal",
-];
-
+/**
+ * Hero enmarcado: titular condensado, campo "cuéntanos qué quieres mejorar"
+ * y las cinco líneas de servicio en tarjetas. Entrada en CSS encadenada a la
+ * intro de marca (--intro-delay): eyebrow → titular → subtítulo → campo → texto
+ * de ayuda → tarjetas → trama. Visible sin esperar a JavaScript.
+ */
 export function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
-  const visualY = useTransform(scrollYProgress, [0, 1], [0, 90]);
-  const visualOpacity = useTransform(scrollYProgress, [0.55, 1], [1, 0.25]);
+  const trackRef = useRef<HTMLUListElement>(null);
+  const scrollCards = (direction: 1 | -1) => {
+    const track = trackRef.current;
+    const card = track?.firstElementChild as HTMLElement | null;
+    if (track && card) track.scrollBy({ left: direction * (card.offsetWidth + 12), behavior: "smooth" });
+  };
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative flex min-h-[100svh] items-center overflow-hidden pb-16 pt-28 lg:pb-24 lg:pt-32"
-      aria-labelledby="hero-title"
-    >
-      <div className="absolute inset-0 bg-gradient-hero" aria-hidden="true" />
-      <div className="mask-fade-b absolute inset-0 grid-bg" aria-hidden="true" />
+    <section id="hero" className="relative p-2 sm:p-3" aria-labelledby="hero-title">
+      <div className="relative flex min-h-[calc(100svh-1rem)] flex-col overflow-hidden rounded-xl border border-white/15 bg-surface-alt sm:min-h-[calc(100svh-1.5rem)]">
+        {/* Fondo: trama de marca, centrada y tenue */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+          <div className="absolute -bottom-[38%] -right-[30%] w-[120vw] opacity-30 sm:-right-[18%] sm:w-[85vw] lg:-bottom-[45%] lg:-right-[8%] lg:w-[62vw]">
+            <div style={at(0.5)} className="animate-enter">
+              <Trama id="hero-trama" draw={false} hatch={false} photo={BRAND_MEDIA.hero} />
+            </div>
+          </div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_42%,rgb(var(--c-surface-alt))_25%,transparent_80%)]" />
+        </div>
 
-      <div className="container-custom relative grid items-center gap-14 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
-        <div>
-          <p
-            className="animate-enter inline-flex items-center gap-2.5 rounded-full border border-white/[0.1] bg-white/[0.03] py-1.5 pl-2 pr-4 text-[13px] text-slate-300"
-          >
-            <span className="rounded-full bg-primary/15 px-2 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wider text-primary-300">
-              Colombia
-            </span>
-            Consultoría · ERP · Cloud · Soporte
+        <div className="relative flex flex-1 flex-col items-center justify-center px-5 pb-10 pt-28 text-center sm:px-10 lg:pt-32"
+        >
+          <p style={at(0.08)} className="animate-enter font-mono text-[11px] uppercase tracking-[0.18em] text-slate-400">
+            Consultoría · ERP · Infraestructura · Soporte — Colombia
           </p>
 
-          <h1 id="hero-title" className="mt-8 text-display-xl font-semibold text-white">
-            {HEADLINE.map(({ word, accent }, index) => (
-              <Fragment key={`${word}-${index}`}>
-                <span className="inline-block overflow-hidden pb-[0.08em] align-bottom">
-                  <span
-                    className={cn("inline-block animate-rise", accent && "gradient-text-blue")}
-                    style={{ animationDelay: `${0.05 + index * 0.05}s` }}
-                  >
-                    {word}
-                  </span>
-                </span>
-                {index < HEADLINE.length - 1 && " "}
-              </Fragment>
-            ))}
+          <h1
+            id="hero-title"
+            tabIndex={-1}
+            style={at(0.14)}
+            className="mt-6 animate-lift font-display font-semibold uppercase leading-[0.88] tracking-[-0.01em] text-white outline-none [font-size:clamp(3rem,1.6rem+6vw,7.75rem)]"
+          >
+            Optimizamos <span className="font-light">tu operación</span>
           </h1>
 
           <p
-            style={{ animationDelay: "0.4s" }}
-            className="animate-lift mt-8 max-w-xl text-lead text-slate-400 text-pretty"
+            style={at(0.22)}
+            className="mt-4 max-w-3xl animate-lift font-display text-xl font-medium uppercase leading-tight tracking-[0.01em] text-slate-200 sm:text-3xl"
           >
-            Consultoría empresarial, ERP con Odoo, automatización, infraestructura cloud y soporte administrado
-            para PYMEs en Colombia. <span className="text-slate-200">Un solo socio tecnológico</span>, del
-            diagnóstico a la operación diaria.
+            Y nos quedamos para <span className="font-semibold text-primary">sostenerla</span>
           </p>
 
-          <div
-            style={{ animationDelay: "0.5s" }}
-            className="animate-enter mt-10 flex flex-col gap-3 xs:flex-row"
-          >
-            <ButtonLink href={PRIMARY_CTA.href}>{PRIMARY_CTA.label}</ButtonLink>
-            <ButtonLink href="/servicios" variant="secondary">
-              Ver Servicios
-            </ButtonLink>
+          <div style={at(0.3)} className="mt-10 w-full max-w-xl animate-enter">
+            <HeroPrompt />
           </div>
+          <p style={at(0.37)} className="mt-3 animate-enter text-xs text-slate-400">
+            Lo lee una persona del equipo. Te respondemos en menos de {SITE.responseTime}.
+          </p>
+        </div>
 
+        {/* Cinco líneas de servicio */}
+        <div style={at(0.44)} className="relative animate-enter px-3 pb-3 sm:px-4 sm:pb-4">
           <ul
-            style={{ animationDelay: "0.65s" }}
-            className="animate-enter mt-12 flex flex-col gap-3 border-t border-white/[0.08] pt-8 sm:flex-row sm:flex-wrap sm:gap-x-8"
+            ref={trackRef}
+            className="scroller flex snap-x snap-mandatory gap-3 overflow-x-auto lg:grid lg:grid-cols-5 lg:overflow-visible"
+            aria-label="Servicios"
           >
-            {PROOF_POINTS.map((point) => (
-              <li key={point} className="flex items-center gap-2.5 text-sm text-slate-300">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/15 text-primary-400">
-                  <Check className="h-3 w-3" aria-hidden="true" />
+            {SERVICES.map((service) => (
+              <li key={service.slug} className="flex w-[86%] shrink-0 snap-start sm:w-[46%] lg:w-auto">
+              <Link
+                href={`/servicios/${service.slug}`}
+                className="group flex w-full flex-col justify-between rounded-lg border border-white/20 bg-background/50 p-4 backdrop-blur transition-colors hover:border-primary/70 hover:bg-background/80"
+              >
+                <span className="flex items-start justify-between gap-3">
+                  <span className="font-display text-xl font-semibold uppercase leading-none tracking-[0.01em] text-white">
+                    {service.title}
+                  </span>
+                  <span className="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-slate-200 transition-colors group-hover:text-primary">
+                    Más información
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:rotate-45" aria-hidden="true" />
+                  </span>
                 </span>
-                {point}
+                <span className="mt-4 line-clamp-2 text-left text-[13px] leading-snug text-slate-300">{service.summary}</span>
+              </Link>
               </li>
             ))}
           </ul>
+          {/* Navegación del carrusel en móvil */}
+          <div className="mt-3 flex justify-center gap-2 lg:hidden">
+            <button
+              type="button"
+              onClick={() => scrollCards(-1)}
+              aria-label="Servicio anterior"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 text-white"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollCards(1)}
+              aria-label="Servicio siguiente"
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-ink-950"
+            >
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
         </div>
-
-        <motion.div style={{ y: visualY, opacity: visualOpacity }}>
-          <HeroVisual />
-        </motion.div>
       </div>
     </section>
   );

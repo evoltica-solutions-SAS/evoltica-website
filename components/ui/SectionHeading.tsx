@@ -4,6 +4,8 @@ import { Reveal } from "@/components/ui/Reveal";
 
 interface SectionHeadingProps {
   eyebrow: string;
+  /** Número de sección editorial ("02"). */
+  index?: string;
   title: React.ReactNode;
   lead?: React.ReactNode;
   align?: "left" | "center";
@@ -15,6 +17,7 @@ interface SectionHeadingProps {
 
 export function SectionHeading({
   eyebrow,
+  index,
   title,
   lead,
   align = "left",
@@ -34,7 +37,7 @@ export function SectionHeading({
       )}
     >
       <div className={cn(!centered && "max-w-3xl")}>
-        <SectionLabel>{eyebrow}</SectionLabel>
+        <SectionLabel index={index}>{eyebrow}</SectionLabel>
         <h2
           className={cn(
             "mt-5 font-semibold text-white text-balance",

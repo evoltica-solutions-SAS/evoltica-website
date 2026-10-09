@@ -12,7 +12,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden border-t border-white/[0.06] bg-ink-950">
+    <footer className="relative overflow-hidden border-t border-white/[0.06] bg-surface-deep">
       <div className="absolute inset-x-0 top-0 h-px bg-brand-line opacity-40" aria-hidden="true" />
 
       <div className="container-custom pb-10 pt-20 lg:pt-28">
@@ -113,7 +113,8 @@ export function Footer() {
             fontSize="205"
             fontWeight="700"
             letterSpacing="-10"
-            fill="rgba(255,255,255,0.04)"
+            fill="currentColor"
+            className="text-white/[0.04]"
           >
             EVOLTICA
           </text>

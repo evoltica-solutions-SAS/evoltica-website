@@ -1,6 +1,6 @@
 # Guía para agentes de IA
 
-> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.2 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -97,7 +97,7 @@ Sigue [workflows/CODE_REVIEW.md](workflows/CODE_REVIEW.md): 18 dimensiones evalu
 Rol responsable: [agents/DESIGNER.md](agents/DESIGNER.md).
 
 - Todo estilo nuevo pasa primero por [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md): tokens de color, clases de componente, tipografía y los tres arquetipos de motion. Si el sistema no cubre lo que necesitas, la extensión se hace en `tailwind.config.ts`/`globals.css`, nunca inline en un componente aislado.
-- El sitio es dark-only y usa una paleta de marca cerrada — no introduzcas modo claro, colores fuera de la paleta, ni una familia tipográfica nueva sin autorización explícita.
+- El sitio tiene tema oscuro (de marca, por defecto) y claro mediante tokens semánticos (ver [ADR-010](docs/decisions/ADR-010-Reference-Alignment-Theme-Type.md)), y una paleta de marca cerrada — no introduzcas colores fuera de la paleta, hex sueltos que rompan el tema claro, ni una familia tipográfica nueva sin autorización explícita.
 - Antes de dar por terminada una sección visual nueva, compárala mentalmente con una sección existente equivalente (mismo tipo de encabezado, mismo espaciado, mismas transiciones) — si se siente "distinta" al resto del sitio, probablemente rompe el sistema.
 
 ## 12. Qué nunca modificar sin autorización

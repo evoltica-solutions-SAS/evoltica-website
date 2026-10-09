@@ -33,6 +33,7 @@ import {
   Bot,
   type LucideIcon,
 } from "lucide-react";
+import type { MediaAsset } from "@/lib/media";
 
 export type BrandColorKey = "green" | "teal" | "blue" | "navy";
 
@@ -88,6 +89,8 @@ export interface ServiceData {
   objective?: string;
   /** Optional: activation note (Desarrollo e Integraciones). */
   note?: string;
+  /** Optional: imagen REAL del servicio (captura propia, foto de operación). Ver lib/media.ts. */
+  cover?: MediaAsset;
 }
 
 export const COMPANY_TAGLINE = "Transformamos procesos. Impulsamos crecimiento.";
@@ -96,6 +99,8 @@ export interface EngagementStep {
   number: number;
   title: string;
   description: string;
+  /** Qué se lleva el cliente al terminar el paso (dato ya comprometido en el sitio). */
+  outcome: string;
 }
 
 /** Embudo comercial real (ver .claude/BUSINESS_CONTEXT.md § Embudo de conversión). */
@@ -104,21 +109,25 @@ export const ENGAGEMENT_STEPS: EngagementStep[] = [
     number: 1,
     title: "Reunión de descubrimiento",
     description: "Conversamos sobre tu negocio sin compromiso.",
+    outcome: "Sin costo · 60 minutos",
   },
   {
     number: 2,
     title: "Diagnóstico",
     description: "Identificamos las mejoras más urgentes.",
+    outcome: "Informe de diagnóstico",
   },
   {
     number: 3,
     title: "Propuesta personalizada",
     description: "Plan, tiempos y valores claros y concretos.",
+    outcome: "En 5 días hábiles",
   },
   {
     number: 4,
     title: "Implementación",
     description: "Ejecutamos con acompañamiento incluido.",
+    outcome: "Acompañamiento incluido",
   },
 ];
 

@@ -18,7 +18,7 @@ Que toda pieza visual nueva se sienta construida por el mismo equipo que constru
 
 ## Conocimientos
 
-Sistemas de diseño basados en tokens, principios de jerarquía visual y espaciado, estética "glassmorphism" del sitio, motion design.
+Sistemas de diseño basados en tokens, principios de jerarquía visual y espaciado, lenguaje editorial del sitio y su gráfico de marca "la trama" (ver [ADR-008](../docs/decisions/ADR-008-Visual-Language-Trama.md)), motion design.
 
 ## Qué documentación consulta primero
 

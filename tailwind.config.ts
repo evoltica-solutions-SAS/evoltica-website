@@ -10,8 +10,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#0B0F19",
-        // Neutros de superficie derivados del fondo de marca (capas de profundidad).
+        // ── Tokens semánticos con tema (valores en app/globals.css, :root y html.light) ──
+        // `white` es el color de primer plano: blanco en oscuro, tinta en claro. Así todo
+        // `text-white`, `border-white/[0.1]`, `bg-white/[0.04]` se invierte solo con el tema.
+        white: "rgb(var(--c-fg) / <alpha-value>)",
+        background: "rgb(var(--c-bg) / <alpha-value>)",
+        surface: {
+          deep: "rgb(var(--c-surface-deep) / <alpha-value>)",
+          alt: "rgb(var(--c-surface-alt) / <alpha-value>)",
+          raised: "rgb(var(--c-surface-raised) / <alpha-value>)",
+        },
+        // Blanco fijo: texto sobre superficies que son oscuras en ambos temas (cortinas, botones de tinta).
+        snow: "#FFFFFF",
+        // Neutros de tinta FIJOS (no cambian con el tema): cortinas, texto sobre verde de marca.
         ink: {
           DEFAULT: "#0B0F19",
           950: "#070A11",
@@ -80,11 +91,12 @@ const config: Config = {
           900: "#000B16",
           950: "#00070D",
         },
+        // 200–500 se invierten con el tema (texto secundario); 600+ son fijos.
         slate: {
-          200: "#E2E8F0",
-          300: "#CBD5E1",
-          400: "#94A3B8",
-          500: "#64748B",
+          200: "rgb(var(--c-slate-200) / <alpha-value>)",
+          300: "rgb(var(--c-slate-300) / <alpha-value>)",
+          400: "rgb(var(--c-slate-400) / <alpha-value>)",
+          500: "rgb(var(--c-slate-500) / <alpha-value>)",
           600: "#475569",
           700: "#334155",
           800: "#1E293B",
@@ -94,10 +106,13 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
+        // Condensada para titulares (ADR-010).
+        display: ["var(--font-display)", "Barlow Condensed", "Arial Narrow", "sans-serif"],
         mono: ["var(--font-mono)", "JetBrains Mono", "Fira Code", "monospace"],
       },
       fontSize: {
         // Escala display fluida (clamp) — encabezados de hero y secciones.
+        "display-hero": ["clamp(3.1rem, 0.6rem + 9.2vw, 10.5rem)", { lineHeight: "0.88", letterSpacing: "-0.055em" }],
         "display-xl": ["clamp(2.6rem, 1.2rem + 5.2vw, 5.75rem)", { lineHeight: "0.98", letterSpacing: "-0.045em" }],
         "display-lg": ["clamp(2.2rem, 1.2rem + 3.6vw, 4.25rem)", { lineHeight: "1.02", letterSpacing: "-0.04em" }],
         "display-md": ["clamp(1.85rem, 1.2rem + 2.2vw, 3.25rem)", { lineHeight: "1.06", letterSpacing: "-0.035em" }],
@@ -110,29 +125,16 @@ const config: Config = {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "brand-line": "linear-gradient(90deg, #12D56F 0%, #14A4BC 50%, #0997D5 100%)",
-        "gradient-hero":
-          "radial-gradient(ellipse 70% 55% at 15% -10%, rgba(18,213,111,0.16), transparent 60%), radial-gradient(ellipse 50% 45% at 95% 20%, rgba(9,151,213,0.12), transparent 60%)",
       },
       animation: {
-        marquee: "marquee 40s linear infinite",
-        "spin-slow": "spin 60s linear infinite",
-        "spin-slower": "spin 90s linear infinite reverse",
-        "dash-flow": "dashFlow 2.8s linear infinite",
-        "pulse-soft": "pulseSoft 3s ease-in-out infinite",
         // Entradas above-the-fold en CSS: corren desde el primer pintado, sin esperar a React.
         rise: "rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both",
         lift: "lift 0.9s cubic-bezier(0.22, 1, 0.36, 1) both",
         enter: "enter 0.8s cubic-bezier(0.22, 1, 0.36, 1) both",
+        // Trazado de las cintas de la trama (una sola vez).
+        draw: "draw 1.8s cubic-bezier(0.65, 0, 0.35, 1) both",
       },
       keyframes: {
-        marquee: {
-          "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-50%)" },
-        },
-        dashFlow: {
-          "0%": { strokeDashoffset: "24" },
-          "100%": { strokeDashoffset: "0" },
-        },
         rise: {
           "0%": { transform: "translateY(105%)" },
           "100%": { transform: "translateY(0)" },
@@ -145,13 +147,12 @@ const config: Config = {
           "0%": { opacity: "0", transform: "translateY(16px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        pulseSoft: {
-          "0%, 100%": { opacity: "0.5", transform: "scale(1)" },
-          "50%": { opacity: "1", transform: "scale(1.15)" },
+        draw: {
+          "0%": { strokeDashoffset: "1" },
+          "100%": { strokeDashoffset: "0" },
         },
       },
       boxShadow: {
-        glow: "0 0 24px rgba(18, 213, 111, 0.28)",
         card: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 20px 50px -20px rgba(0,0,0,0.6)",
         nav: "0 8px 32px -8px rgba(0,0,0,0.55)",
       },

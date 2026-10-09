@@ -19,11 +19,11 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
     <>
       <nav aria-label="Migas de pan" className="mb-8">
-        <ol className="flex flex-wrap items-center gap-1.5 font-mono text-xs uppercase tracking-[0.12em] text-slate-400">
+        <ol className="flex h-5 min-w-0 flex-nowrap items-center gap-1.5 overflow-hidden whitespace-nowrap font-mono text-xs uppercase leading-5 tracking-[0.12em] text-slate-400">
           {trail.map((crumb, index) => {
             const isLast = index === trail.length - 1;
             return (
-              <li key={crumb.href} className="flex items-center gap-1.5">
+              <li key={crumb.href} className={isLast ? "min-w-0 truncate" : "flex shrink-0 items-center gap-1.5"}>
                 {isLast ? (
                   <span aria-current="page" className="text-slate-300">
                     {crumb.label}

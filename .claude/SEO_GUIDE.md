@@ -1,6 +1,6 @@
 # Guía de SEO
 
-> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.3 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -17,9 +17,9 @@ No cubre: Core Web Vitals como implementación técnica (ver [PERFORMANCE_GUIDE.
 - Todo cambio de título, descripción o metadata pasa por el objeto `metadata` de `app/layout.tsx` o por el `metadata`/`generateMetadata` de cada página, nunca con `<title>`/`<meta>` sueltos en el JSX.
 - **Toda página define su propio `alternates.canonical`** (ruta relativa). Si no lo hace, hereda el canonical de la home desde `app/layout.tsx` y queda canonicalizada a `/` por error.
 - Mantén sincronizados `title`, `description`, Open Graph y Twitter card cuando cambie el mensaje principal del sitio; no los dejes divergir.
-- Los datos estructurados JSON-LD (`organizationSchema`, `webSiteSchema` en `app/layout.tsx`) deben actualizarse si cambian los datos reales de la empresa (teléfono, redes sociales, dirección); no son solo boilerplate. Las páginas internas agregan `BreadcrumbList` (componente `Breadcrumbs`) y las de servicio un `Service`, siempre vía el componente `JsonLd` (escapa `<`). No declares acciones que el sitio no soporta: se retiró el `SearchAction` porque el sitio no tiene búsqueda.
+- Los datos estructurados JSON-LD (`organizationSchema`, `webSiteSchema` en `app/layout.tsx`) deben actualizarse si cambian los datos reales de la empresa (teléfono, redes sociales, dirección); no son solo boilerplate. Las páginas internas agregan `BreadcrumbList` (componente `Breadcrumbs`), las de servicio y las fichas de `/soluciones/[slug]` un `Service` (con `category` = línea), y `/soluciones` un `ItemList`. **Nunca** un `Offer`/`price` sin precio aprobado (ADR-014), siempre vía el componente `JsonLd` (escapa `<`). No declares acciones que el sitio no soporta: se retiró el `SearchAction` porque el sitio no tiene búsqueda.
 - Toda imagen debe tener `alt` descriptivo; los headings deben seguir jerarquía semántica real (`h1` único por página, `h2`/`h3` en orden) y no elegirse por tamaño visual sino por estructura de contenido (ver también [UX_GUIDE.md § Accesibilidad](UX_GUIDE.md#accesibilidad)).
-- El sitemap se **genera** en `app/sitemap.ts` a partir de `lib/` (servicios y casos se incluyen automáticamente). Una ruta pública nueva fuera de esos datos se agrega ahí. `public/robots.txt` sigue siendo estático.
+- El sitemap se **genera** en `app/sitemap.ts` a partir de `lib/` (servicios y casos se incluyen automáticamente). Una ruta pública nueva fuera de esos datos se agrega ahí. `public/robots.txt` sigue siendo estático y excluye las áreas privadas `/app/` y `/admin/` (ADR-012), que además son `noindex` y nunca entran al sitemap.
 - Las páginas que todavía no tienen contenido propio (p. ej. `/casos-de-exito` con `CASE_STUDIES` vacío) se marcan `noindex` y se excluyen del sitemap hasta tener contenido real.
 - No bloquees el indexado (`robots: { index: false }`) ni cambies `canonical`/`NEXT_PUBLIC_SITE_URL` sin confirmarlo explícitamente: afecta directamente el posicionamiento del sitio en producción — ver [AI_GUIDELINES.md § Qué nunca modificar sin autorización](AI_GUIDELINES.md#qué-nunca-modificar-sin-autorización).
 

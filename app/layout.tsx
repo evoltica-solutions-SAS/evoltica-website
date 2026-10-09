@@ -1,11 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Barlow_Condensed, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 import { MotionProvider } from "@/components/layout/MotionProvider";
-import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
-import { JsonLd } from "@/components/ui/JsonLd";
+import { buildHeadScript } from "@/lib/intro";
 import { SITE_URL } from "@/lib/site-config";
 
 const siteUrl = SITE_URL;
@@ -15,6 +12,14 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
+});
+
+// Condensada para titulares (ADR-010).
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display",
+  weight: ["300", "500", "600", "700"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -98,51 +103,10 @@ export const viewport: Viewport = {
   themeColor: "#0B0F19",
 };
 
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "EVOLTICA SOLUTIONS SAS",
-  url: siteUrl,
-  logo: `${siteUrl}/brand/logo.png`,
-  description:
-    "Consultoría empresarial, ERP y automatización con Odoo, infraestructura y cloud, servicios administrados y desarrollo e integraciones para empresas que buscan evolucionar.",
-  contactPoint: {
-    "@type": "ContactPoint",
-    telephone: "+57-314-403-6151",
-    email: "comercial@evoltica.com",
-    contactType: "customer service",
-    areaServed: "CO",
-    availableLanguage: "Spanish",
-  },
-  address: {
-    "@type": "PostalAddress",
-    addressCountry: "CO",
-    addressRegion: "Colombia",
-  },
-  sameAs: [
-    "https://www.linkedin.com/company/evoltica",
-    "https://twitter.com/evoltica",
-    "https://github.com/evoltica",
-  ],
-  knowsAbout: [
-    "Consultoría Empresarial",
-    "ERP",
-    "Odoo",
-    "Automatización de Procesos",
-    "Infraestructura Cloud",
-    "Servicios Administrados de TI",
-    "Desarrollo de Software",
-    "Integraciones API",
-  ],
-};
-
-const webSiteSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "EVOLTICA SOLUTIONS SAS",
-  url: siteUrl,
-  inLanguage: "es-CO",
-};
+// Antes del primer pintado: tema guardado + si corre la intro de marca (cooldown
+// en localStorage, ver lib/intro.ts; solo en el sitio público). `?intro=1` y
+// resetIntro() solo en desarrollo.
+const headScript = buildHeadScript(process.env.NODE_ENV === "development");
 
 export default function RootLayout({
   children,
@@ -150,14 +114,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={`dark ${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="es" className={`dark ${inter.variable} ${barlowCondensed.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: headScript }} />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
-        <JsonLd data={organizationSchema} />
-        <JsonLd data={webSiteSchema} />
       </head>
       <body className="bg-background font-sans text-white antialiased">
         <a
@@ -166,12 +129,8 @@ export default function RootLayout({
         >
           Saltar al contenido principal
         </a>
-        <MotionProvider>
-          <Navbar />
-          <main id="main-content">{children}</main>
-          <Footer />
-          <WhatsAppButton />
-        </MotionProvider>
+        {/* Cada superficie (public, auth, portal, admin) monta su propio chrome y su <main id="main-content">. */}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );

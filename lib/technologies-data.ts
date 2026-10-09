@@ -31,5 +31,3 @@ export const TECH_CATEGORIES: TechCategory[] = [
     items: ["Python", "Node.js", "React", "Next.js", "PostgreSQL", "Docker", "GitHub"],
   },
 ];
-
-export const TECH_MARQUEE: string[] = TECH_CATEGORIES.flatMap((category) => category.items);

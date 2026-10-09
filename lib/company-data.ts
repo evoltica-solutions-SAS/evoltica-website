@@ -62,65 +62,91 @@ export interface Differentiator {
   icon: LucideIcon;
   title: string;
   description: string;
+  /** Lo que deliberadamente NO hacemos (columna tachada). */
+  not: string;
+  /** Lo que hacemos en su lugar. */
+  instead: string;
 }
 
 export const DIFFERENTIATORS: Differentiator[] = [
   {
     icon: Search,
     title: "Diagnóstico antes que tecnología",
+    not: "Vender software el primer día.",
+    instead: "Diagnosticar antes de proponer.",
     description:
       "No vendemos software primero. Empezamos por entender tu negocio, tus procesos y tus verdaderas prioridades.",
   },
   {
     icon: HeartHandshake,
     title: "Nos quedamos, no solo implementamos",
+    not: "Implementar y desaparecer.",
+    instead: "Quedarnos a sostener la operación.",
     description:
       "Nuestra meta no es entregar un proyecto y desaparecer. Construimos relaciones de largo plazo con soporte y mejora continua.",
   },
   {
     icon: ShieldCheck,
     title: "Infraestructura que nunca duerme",
+    not: "Enterarnos de la caída cuando nos llamas.",
+    instead: "Monitorear, respaldar y proteger de forma continua.",
     description:
       "Monitoreo, backups y seguridad continuos para que la tecnología nunca sea el problema de tu negocio.",
   },
   {
     icon: Code2,
     title: "Solo desarrollamos cuando aporta valor",
+    not: "Desarrollar a la medida por defecto.",
+    instead: "Construir solo cuando el estándar no alcanza.",
     description:
       "No ofrecemos desarrollo a medida por defecto. Se activa únicamente cuando tu negocio realmente lo necesita.",
   },
   {
     icon: ClipboardList,
     title: "Procesos documentados y medibles",
+    not: "Dejar los procesos en la cabeza de una persona.",
+    instead: "Documentarlos con responsables e indicadores.",
     description:
       "Cada mejora que implementamos queda documentada, con roles, responsabilidades e indicadores claros de gestión.",
   },
   {
     icon: Layers,
     title: "Un solo socio para toda tu operación",
+    not: "Un proveedor distinto para cada problema.",
+    instead: "Un solo equipo: ERP, servidores y soporte.",
     description:
       "Desde el ERP hasta el hosting y el soporte diario: todo bajo un mismo equipo que conoce tu negocio.",
   },
 ];
 
 export interface Commitment {
-  /** Valor numérico animado; null si el dato no es numérico. */
-  value: number | null;
-  prefix?: string;
-  suffix?: string;
-  display?: string;
+  value: string;
   label: string;
 }
 
 /**
  * Compromisos públicos ya declarados por la empresa (no son métricas de resultados).
- * Cambiar cualquiera requiere autorización — ver BUSINESS_CONTEXT.md.
+ * El primero se presenta destacado. Cambiar cualquiera requiere autorización —
+ * ver BUSINESS_CONTEXT.md.
  */
 export const COMMITMENTS: Commitment[] = [
-  { value: 4, prefix: "<", suffix: "h", label: "Respuesta en horas hábiles a cada solicitud" },
-  { value: 5, suffix: " días", label: "Hábiles para entregar la propuesta técnica" },
-  { value: 100, suffix: "%", label: "Gratuita: la consultoría inicial no tiene costo" },
-  { value: null, display: "24/7", label: "Monitoreo de la infraestructura administrada" },
+  { value: "4 h", label: "Es lo máximo que esperas por una respuesta, en horario hábil." },
+  { value: "5 días", label: "Hábiles para tener la propuesta técnica en tus manos." },
+  { value: "$0", label: "Cuesta la consultoría inicial. Sin compromiso." },
+  { value: "24/7", label: "Monitoreo de la infraestructura que administramos." },
+];
+
+/**
+ * Situaciones operativas frecuentes en una PYME. Son ilustrativas (no casos de
+ * clientes ni estadísticas): ayudan al visitante a reconocerse en el problema.
+ */
+export const OPERATIONAL_SYMPTOMS: string[] = [
+  "El inventario del sistema no coincide con lo que hay en la bodega.",
+  "Las ventas viven en un Excel que solo entiende una persona.",
+  "Cerrar el mes toma días de cruzar archivos a mano.",
+  "Cada área usa su propio programa y nadie ve el panorama completo.",
+  "Cuando el servidor o el sistema fallan, no hay a quién llamar.",
+  "Compraron un software y quedó a medio implementar.",
 ];
 
 export interface TeamMember {

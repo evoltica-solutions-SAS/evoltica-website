@@ -7,16 +7,20 @@ interface LogoProps {
   size?: number;
   showWordmark?: boolean;
   priority?: boolean;
+  /** Destino del enlace: el portal lleva a su propio inicio. */
+  href?: string;
+  /** Clases extra del texto "EVOLTICA SOLUTIONS" (p. ej. ocultarlo en un rango de anchos). */
+  wordmarkClassName?: string;
 }
 
 /**
  * Única fuente autorizada del logo (public/brand/logo.png). El PNG original
  * tiene margen transparente superior; se encuadra con CSS sin alterar el archivo.
  */
-export function Logo({ className, size = 36, showWordmark = true, priority = false }: LogoProps) {
+export function Logo({ className, size = 36, showWordmark = true, priority = false, href = "/", wordmarkClassName }: LogoProps) {
   return (
     <Link
-      href="/"
+      href={href}
       className={cn("group flex shrink-0 items-center gap-2.5", className)}
       aria-label="EVOLTICA SOLUTIONS — Inicio"
     >
@@ -31,7 +35,7 @@ export function Logo({ className, size = 36, showWordmark = true, priority = fal
         />
       </span>
       {showWordmark && (
-        <span className="text-[1.05rem] font-bold leading-none tracking-tight">
+        <span className={cn("whitespace-nowrap text-[1.05rem] font-bold leading-none tracking-tight", wordmarkClassName)}>
           <span className="text-white">EVOLTICA</span>
           <span className="font-light text-secondary-400"> SOLUTIONS</span>
         </span>

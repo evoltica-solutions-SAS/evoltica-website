@@ -1,6 +1,6 @@
 # Roadmap (24 meses)
 
-> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.3 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -20,6 +20,8 @@ No cubre: el detalle de implementación de cada fase (eso se documenta cuando la
 - Las fases que implican un cambio arquitectónico mayor (introducir base de datos, autenticación, etc.) requieren un **ADR nuevo** en [docs/decisions/](docs/decisions/) antes de empezar la implementación — ver [ARCHITECTURE.md § Límites deliberados del proyecto](ARCHITECTURE.md#límites-deliberados-del-proyecto).
 
 ---
+
+> **Nota (2026-10-08):** la dirección de producto cambió a una plataforma comercial propia ([ADR-014](docs/decisions/ADR-014-Commercial-Platform.md)). El plan de fases vigente para catálogo, solicitudes, cotizaciones, portal, admin y pagos está en [docs/architecture/2026-10-08-plataforma-comercial-b2b.md § 11](docs/architecture/2026-10-08-plataforma-comercial-b2b.md); este roadmap conserva los horizontes de consolidación (seguridad, analytics, testing, SEO).
 
 ## Horizonte 0 — Fundación (estado actual)
 
@@ -111,6 +113,7 @@ Antes de agregar superficie nueva, se consolida la base: seguridad, rendimiento,
 ## Horizonte 3 — Año 2, primer semestre — Productos digitales para clientes
 
 ### Fase 10 — Portal Clientes
+- **Estado (2026-10-08)**: adelantada por decisión del negocio. Estructura, dominio y contratos en construcción ([ADR-012](docs/decisions/ADR-012-Public-Portal-Admin-Split.md)); backend e identidad pendientes de [ADR-013](docs/decisions/ADR-013-Backend-Auth-Strategy.md).
 - **Objetivo**: dar a los clientes de Servicios Administrados un canal propio para ver el estado de su cuenta/soporte, reforzando la recurrencia (ver [BUSINESS_CONTEXT.md § Modelo de negocio](BUSINESS_CONTEXT.md#modelo-de-negocio-de-proyecto-a-recurrencia)).
 - **Funcionalidades**: login de cliente, vista de tickets de mesa de ayuda, estado de servicios contratados.
 - **Prioridad**: Alta (impacto directo en retención).
@@ -143,6 +146,7 @@ Antes de agregar superficie nueva, se consolida la base: seguridad, rendimiento,
 - **Criterios de terminado**: empleados pueden autenticarse y acceder a al menos un recurso interno real.
 
 ### Fase 14 — Dashboard Administrativo
+- **Estado (2026-10-08)**: adelantada junto con la Fase 10 como `/admin` (ADR-012).
 - **Objetivo**: dar visibilidad interna a Evoltica sobre leads, estado comercial y métricas del sitio en un solo lugar.
 - **Funcionalidades**: panel con leads capturados (integrado con Fase 12), métricas de Fase 6 (Analytics), estado de casos de éxito/contenido.
 - **Prioridad**: Media.

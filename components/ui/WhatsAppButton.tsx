@@ -56,7 +56,7 @@ export function WhatsAppButton() {
   return (
     <AnimatePresence>
       {isVisible && (
-        <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+        <div className="fixed bottom-5 right-5 z-40 sm:bottom-6 sm:right-6">
           <AnimatePresence>
             {showBubble && (
               <motion.div
@@ -64,7 +64,7 @@ export function WhatsAppButton() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ type: "spring", damping: 22, stiffness: 300 }}
-                className="relative max-w-[250px] rounded-2xl rounded-br-md border border-white/10 bg-ink-700 p-4 shadow-nav"
+                className="absolute bottom-full right-0 mb-3 w-[250px] rounded-md border border-white/10 bg-surface-raised p-4 shadow-nav"
                 role="status"
               >
                 <button
@@ -96,10 +96,6 @@ export function WhatsAppButton() {
             transition={{ type: "spring", damping: 20, stiffness: 300 }}
             className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-lg shadow-[#25D366]/25"
           >
-            <span
-              className="absolute inset-0 rounded-full bg-[#25D366] opacity-40 animate-pulse-soft"
-              aria-hidden="true"
-            />
             <WhatsAppIcon className="relative h-7 w-7 fill-white" />
           </motion.a>
         </div>

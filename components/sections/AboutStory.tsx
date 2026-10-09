@@ -36,7 +36,6 @@ export function AboutStory() {
             { icon: Eye, title: "Visión", text: VISION },
           ].map((block, index) => (
             <Reveal key={block.title} delay={index * 0.08} className="card relative overflow-hidden p-8 sm:p-10 lg:p-12">
-              <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
               <span className="icon-tile">
                 <block.icon className="h-5 w-5" aria-hidden="true" />
               </span>
@@ -48,16 +47,16 @@ export function AboutStory() {
       </section>
 
       {/* Valores */}
-      <section className="section-padding relative bg-ink-800/60" aria-labelledby="values-title">
+      <section className="section-padding relative bg-surface-raised/60" aria-labelledby="values-title">
         <div className="container-custom">
           <SectionHeading
             eyebrow="Valores"
             title={<span id="values-title">Los principios detrás de cada decisión.</span>}
             size="md"
           />
-          <RevealGroup as="ul" className="grid gap-px overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.08] sm:grid-cols-2 lg:grid-cols-4">
+          <RevealGroup as="ul" className="grid gap-px overflow-hidden border border-white/[0.08] bg-white/[0.08] sm:grid-cols-2 lg:grid-cols-4">
             {VALUES.map((value) => (
-              <RevealItem as="li" key={value.title} className="bg-ink-800 p-8 lg:p-10">
+              <RevealItem as="li" key={value.title} className="bg-surface-raised p-8 lg:p-10">
                 <value.icon className="h-6 w-6 text-primary-400" aria-hidden="true" />
                 <h3 className="mt-8 text-xl font-semibold text-white">{value.title}</h3>
                 <p className="mt-3 leading-relaxed text-slate-400">{value.description}</p>

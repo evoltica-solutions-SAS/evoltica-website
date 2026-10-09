@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SERVICES } from "@/lib/services-data";
 import { CASE_STUDIES } from "@/lib/cases-data";
+import { PUBLISHED_SOLUTIONS } from "@/lib/catalog";
 import { SITE_URL } from "@/lib/site-config";
 
 /** Sitemap generado desde los datos: refleja siempre las rutas públicas vigentes. */
@@ -15,6 +16,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.85,
+    })),
+    { url: `${SITE_URL}/soluciones`, lastModified, changeFrequency: "monthly", priority: 0.85 },
+    ...PUBLISHED_SOLUTIONS.map((solution) => ({
+      url: `${SITE_URL}/soluciones/${solution.slug}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
     })),
     { url: `${SITE_URL}/nosotros`, lastModified, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/contacto`, lastModified, changeFrequency: "yearly", priority: 0.8 },

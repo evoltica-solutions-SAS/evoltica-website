@@ -1,67 +1,79 @@
-"use client";
-
-import { useRef } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { SectionLabel } from "@/components/ui/SectionLabel";
 import { ButtonLink } from "@/components/ui/ButtonLink";
-import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import { Reveal } from "@/components/ui/Reveal";
 import { ENGAGEMENT_STEPS } from "@/lib/services-data";
 import { PRIMARY_CTA } from "@/lib/site-config";
 
 interface EngagementTimelineProps {
+  index?: string;
   eyebrow?: string;
   title?: React.ReactNode;
   lead?: string;
 }
 
-/** Embudo de entrada (4 pasos) con línea de progreso ligada al scroll. */
+// Desplazamiento vertical de cada tarjeta apilada (sticky) en escritorio.
+const STACK_OFFSETS = ["md:top-28", "md:top-32", "md:top-36", "md:top-40"];
+
+/**
+ * Embudo de entrada (4 pasos) como tarjetas que se apilan al hacer scroll.
+ * Solo CSS (position: sticky): sin JavaScript y sin efectos decorativos.
+ */
 export function EngagementTimeline({
-  eyebrow = "Cómo empezamos",
+  index,
+  eyebrow = "Proceso",
   title = (
     <>
-      De la primera conversación <span className="text-slate-500">a la implementación.</span>
+      Cómo empezamos.
+      <span className="block font-light text-slate-400">Sin letra pequeña.</span>
     </>
   ),
-  lead = "Un proceso claro y sin compromiso hasta que tengas una propuesta con plan, tiempos y valores concretos.",
+  lead = "Cuatro pasos y ningún compromiso hasta que tengas una propuesta con plan, tiempos y valores concretos.",
 }: EngagementTimelineProps) {
-  const listRef = useRef<HTMLOListElement>(null);
-  const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 0.85", "end 0.55"] });
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
-
   return (
     <section id="proceso" className="section-padding relative" aria-label="Proceso de trabajo">
-      <div className="container-custom">
-        <SectionHeading eyebrow={eyebrow} title={title} lead={lead} />
-
-        <div className="relative">
-          {/* Riel + progreso: vertical en móvil, horizontal en escritorio */}
-          <div className="absolute bottom-0 left-[1.1875rem] top-0 w-px bg-white/[0.08] lg:bottom-auto lg:left-0 lg:right-0 lg:top-[1.1875rem] lg:h-px lg:w-auto" aria-hidden="true">
-            <motion.div
-              style={{ scaleY: progress }}
-              className="h-full w-full origin-top bg-brand-line lg:hidden"
-            />
-            <motion.div
-              style={{ scaleX: progress }}
-              className="hidden h-full w-full origin-left bg-brand-line lg:block"
-            />
+      <div className="container-custom grid gap-12 lg:grid-cols-12 lg:gap-10">
+        <Reveal className="lg:col-span-4">
+          <div className="lg:sticky lg:top-32">
+            <SectionLabel index={index}>{eyebrow}</SectionLabel>
+            <h2 className="mt-6 text-display-md font-semibold text-white">{title}</h2>
+            <p className="mt-6 max-w-sm leading-relaxed text-slate-400">{lead}</p>
+            <ButtonLink href={PRIMARY_CTA.href} className="mt-10">
+              Agendar reunión de descubrimiento
+            </ButtonLink>
           </div>
+        </Reveal>
 
-          <RevealGroup as="ol" className="relative grid gap-12 lg:grid-cols-4 lg:gap-8">
-            {ENGAGEMENT_STEPS.map((step) => (
-              <RevealItem as="li" key={step.number} className="relative pl-16 lg:pl-0 lg:pt-16">
-                <span className="absolute left-0 top-0 flex h-[2.375rem] w-[2.375rem] items-center justify-center rounded-full border border-white/[0.14] bg-ink font-mono text-sm text-primary-300">
+        <ol className="lg:col-span-7 lg:col-start-6">
+          {ENGAGEMENT_STEPS.map((step, stepIndex) => (
+            <li
+              key={step.number}
+              className={`mb-6 border border-white/[0.1] bg-surface-raised md:sticky md:mb-[12vh] last:mb-0 ${STACK_OFFSETS[stepIndex]}`}
+            >
+              <div className="grid min-h-[16rem] grid-cols-[auto_1fr] gap-6 p-7 sm:gap-10 sm:p-10">
+                <span
+                  className="font-semibold leading-[0.78] tracking-[-0.06em] text-primary [font-size:clamp(4rem,3rem+4vw,7.5rem)]"
+                  aria-hidden="true"
+                >
                   {String(step.number).padStart(2, "0")}
                 </span>
-                <h3 className="text-xl font-semibold text-white">{step.title}</h3>
-                <p className="mt-3 max-w-xs leading-relaxed text-slate-400">{step.description}</p>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </div>
-
-        <div className="mt-16">
-          <ButtonLink href={PRIMARY_CTA.href}>Agendar reunión de descubrimiento</ButtonLink>
-        </div>
+                <div className="flex flex-col justify-between gap-8">
+                  <div>
+                    <h3 className="text-display-sm font-semibold text-white">
+                      <span className="sr-only">Paso {step.number}: </span>
+                      {step.title}
+                    </h3>
+                    <p className="mt-3 max-w-md leading-relaxed text-slate-400">{step.description}</p>
+                  </div>
+                  <p className="flex items-center gap-3 border-t border-white/[0.08] pt-5 font-mono text-xs uppercase tracking-[0.14em] text-slate-300">
+                    <span className="text-slate-400">Recibes</span>
+                    <span className="h-px w-6 bg-primary" aria-hidden="true" />
+                    {step.outcome}
+                  </p>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );

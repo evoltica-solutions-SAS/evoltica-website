@@ -1,39 +1,46 @@
-import { Counter } from "@/components/ui/Counter";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { COMMITMENTS } from "@/lib/company-data";
+import { scaleIn } from "@/hooks/useScrollAnimation";
 
-/** Compromisos públicos de servicio (no son métricas de resultados de clientes). */
-export function Commitments() {
+/**
+ * Compromisos públicos de servicio en composición asimétrica: uno destacado a
+ * gran escala, el resto en columna. Son compromisos, no resultados de clientes.
+ */
+/** `index` solo en páginas con capítulos numerados. */
+export function Commitments({ index }: { index?: string }) {
+  const [featured, ...rest] = COMMITMENTS;
+  const [featuredNumber, featuredUnit] = featured.value.split(" ");
+
   return (
-    <section className="relative overflow-hidden border-y border-white/[0.06] bg-ink-900 py-20 lg:py-28" aria-labelledby="commitments-title">
-      <div className="pointer-events-none absolute inset-0 grid-bg opacity-50 mask-fade-b" aria-hidden="true" />
-      <div className="container-custom relative">
-        <div className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <SectionLabel>Nuestro compromiso</SectionLabel>
-            <h2 id="commitments-title" className="mt-5 max-w-2xl text-display-sm font-semibold text-white text-balance">
-              Lo que puedes esperar desde el primer día.
-            </h2>
-          </div>
-          <p className="max-w-sm text-sm leading-relaxed text-slate-400">
-            Compromisos de servicio de Evoltica. Sin costos ocultos ni letra pequeña.
-          </p>
-        </div>
-
-        <RevealGroup as="ul" className="grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.08] lg:grid-cols-4">
-          {COMMITMENTS.map((item) => (
-            <RevealItem as="li" key={item.label} className="bg-ink-900 p-5 sm:p-8 lg:p-10">
-              <p className="text-[clamp(2.1rem,1.2rem+3.4vw,4.75rem)] font-semibold leading-none tracking-[-0.05em] text-white">
-                {item.value === null ? (
-                  item.display
-                ) : (
-                  <Counter value={item.value} prefix={item.prefix} suffix={item.suffix} />
-                )}
+    <section className="relative overflow-hidden border-y border-white/[0.08] bg-surface-alt py-24 lg:py-32" aria-labelledby="commitments-title">
+      <div className="container-custom grid gap-16 lg:grid-cols-12 lg:gap-10">
+        <Reveal className="lg:col-span-7">
+          <SectionLabel index={index}>Compromisos</SectionLabel>
+          <h2 id="commitments-title" className="sr-only">
+            Compromisos de servicio
+          </h2>
+          <RevealGroup amount={0.4}>
+            <RevealItem variants={scaleIn} className="origin-bottom-left">
+              <p className="mt-8 font-semibold leading-[0.8] tracking-[-0.07em] text-white [font-size:clamp(7rem,4rem+15vw,17rem)]">
+                {featuredNumber}
+                <span className="text-primary">{featuredUnit}</span>
               </p>
-              <p className="mt-4 max-w-[14rem] text-sm sm:text-[0.95rem] leading-relaxed text-slate-400">{item.label}</p>
+            </RevealItem>
+          </RevealGroup>
+          <p className="mt-8 max-w-md text-display-sm font-light text-slate-200">{featured.label}</p>
+        </Reveal>
+
+        <RevealGroup as="ul" className="self-end border-t border-white/[0.1] lg:col-span-4 lg:col-start-9">
+          {rest.map((item) => (
+            <RevealItem as="li" key={item.value} className="border-b border-white/[0.1] py-6">
+              <p className="text-5xl font-semibold tracking-[-0.04em] text-white">{item.value}</p>
+              <p className="mt-2 leading-relaxed text-slate-400">{item.label}</p>
             </RevealItem>
           ))}
+          <RevealItem as="li" className="pt-6 text-xs leading-relaxed text-slate-400">
+            Compromisos de servicio de Evoltica. Sin costos ocultos ni letra pequeña.
+          </RevealItem>
         </RevealGroup>
       </div>
     </section>

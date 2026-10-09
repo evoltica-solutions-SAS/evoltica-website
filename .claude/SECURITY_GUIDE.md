@@ -1,6 +1,6 @@
 # Estándares de seguridad
 
-> **Versión**: 1.0 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -13,6 +13,8 @@ Cubre: validación y sanitización de input, manejo de secretos y variables de e
 No cubre: SEO/indexación (ver [SEO_GUIDE.md](SEO_GUIDE.md)) ni rendimiento (ver [PERFORMANCE_GUIDE.md](PERFORMANCE_GUIDE.md)).
 
 ## Superficie de riesgo
+
+Desde ADR-012 la superficie incluye las áreas privadas (ver § Áreas privadas); hoy no exponen datos reales.
 
 **Única superficie de entrada de datos externos**: `app/api/contact/route.ts`. Trátalo como el punto de mayor riesgo del proyecto — es también el único lugar del sitio donde entran datos que Evoltica no controla.
 
@@ -27,6 +29,16 @@ No cubre: SEO/indexación (ver [SEO_GUIDE.md](SEO_GUIDE.md)) ni rendimiento (ver
 - **Rate limiting / abuso**: el endpoint de contacto no tiene actualmente límite de tasa. Si el volumen de spam se vuelve un problema, la solución se discute antes de implementarse (p. ej. rate limiting en el borde con Vercel, CAPTCHA, o validación adicional), no se improvisa sobre la marcha.
 - **Dependencias**: antes de agregar una dependencia nueva, revisa que sea mantenida activamente y evalúa su necesidad real (ver [PERFORMANCE_GUIDE.md](PERFORMANCE_GUIDE.md)); no agregues paquetes para resolver algo trivial que se puede escribir en unas líneas.
 - **Cabeceras y transporte**: el sitio se sirve sobre HTTPS vía Vercel; no se debe introducir contenido mixto (`http://`) en assets, links o llamadas `fetch`.
+
+## Áreas privadas (`/app`, `/admin`) — ADR-012
+
+- **Autorización siempre en el servidor**: cada layout, página y server action del área privada llama a `getPortalContext()` / `requireRole()`. `middleware.ts` solo redirige de forma optimista; nunca es la única barrera.
+- **Aislamiento por organización**: los repositorios reciben la sesión y filtran por `organizationId`; un registro ajeno se trata como inexistente (`notFound()`), sin revelar que existe.
+- **Sin acceso real hasta ADR-013**: no hay proveedor de identidad; no se aceptan credenciales. El entorno de demostración solo existe con `next dev` (`PORTAL_DEMO_ENABLED`) y no se puede activar por variable de entorno.
+- **Código de servidor aislado**: `lib/server/**` importa `server-only`; los datos ficticios y los contratos nunca llegan al bundle del navegador.
+- **Datos financieros**: el portal no genera facturas ni marca pagos; el estado de un pago solo lo cambia un webhook verificado.
+- **Adjuntos**: no viajan por server actions (límite 1 MB); se validan tipo, tamaño y cantidad en cliente y servidor (`ATTACHMENT_LIMITS`).
+- Detalle de lo pendiente: [docs/architecture/2026-10-08-portal-integraciones-pendientes.md](docs/architecture/2026-10-08-portal-integraciones-pendientes.md).
 
 ## Checklist de seguridad para cambios en `app/api/contact/route.ts`
 

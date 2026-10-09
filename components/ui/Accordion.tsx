@@ -42,7 +42,7 @@ export function Accordion({ items, defaultOpen = 0 }: AccordionProps) {
                   </span>
                   <span
                     className={cn(
-                      "text-base font-medium transition-colors sm:text-lg",
+                      "text-lg font-medium tracking-tight transition-colors sm:text-xl",
                       isOpen ? "text-white" : "text-slate-300 group-hover:text-white"
                     )}
                   >
@@ -51,7 +51,7 @@ export function Accordion({ items, defaultOpen = 0 }: AccordionProps) {
                 </span>
                 <span
                   className={cn(
-                    "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-300",
+                    "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center border transition-all duration-300",
                     isOpen
                       ? "rotate-45 border-primary bg-primary text-ink-950"
                       : "border-white/15 text-slate-300 group-hover:border-white/40"

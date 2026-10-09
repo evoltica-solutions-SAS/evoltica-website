@@ -5,7 +5,7 @@ import { METHODOLOGY } from "@/lib/process-data";
 /** Metodología de ejecución de proyectos (7 etapas). */
 export function Methodology() {
   return (
-    <section className="section-padding relative border-t border-white/[0.06] bg-ink-800/60" aria-labelledby="methodology-title">
+    <section className="section-padding relative border-t border-white/[0.06] bg-surface-raised/60" aria-labelledby="methodology-title">
       <div className="container-custom">
         <SectionHeading
           eyebrow="Metodología"

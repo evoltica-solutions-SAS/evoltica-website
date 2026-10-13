@@ -1,6 +1,6 @@
 # Contexto de negocio
 
-> **Versión**: 1.2 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.3 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -71,7 +71,7 @@ Definido en `ENGAGEMENT_STEPS` (`lib/services-data.ts`):
 ## KPIs de negocio que el sitio debe soportar
 
 - **Leads calificados** vía formulario de contacto (`app/api/contact/route.ts`) y botón de WhatsApp.
-- **Tiempo de respuesta comprometido**: "4 horas hábiles" (`SITE.responseTime` en `lib/site-config.ts`, usado en hero, formulario y CTAs; y el mensaje del endpoint `app/api/contact/route.ts`). Es una promesa pública al cliente, no un texto decorativo.
+- **Tiempo de respuesta**: **no hay un compromiso publicado.** El "4 horas hábiles" heredado no está aprobado como compromiso comercial y se retiró del sitio el 2026-10-10 (textos, `COMMITMENTS`, FAQ y respuesta de `/api/contact`; `SITE.responseTime` ya no existe). No se reintroduce un plazo sin autorización explícita.
 - **Posicionamiento SEO local** en Colombia para búsquedas relacionadas con ERP/Odoo y transformación digital (detalle en [SEO_GUIDE.md](SEO_GUIDE.md)).
 
 ## Contenido comercial y legal sensible
@@ -80,9 +80,11 @@ Los siguientes elementos son **afirmaciones de la empresa hacia clientes reales*
 
 - **Política de precios** (ADR-014): solo se publican precios **aprobados** por Evoltica (`ApprovedPrice`: monto, condiciones, quién y cuándo aprobó). Las modalidades de compra directa y suscripción exigen ese precio; sin él, el build falla. Hoy no hay ningún precio aprobado: todo el catálogo es cotización, consultoría o a la medida. Sin pasarela de pagos verificada no hay compra en línea (`CHECKOUT_ENABLED = false`).
 - Garantías y compromisos de servicio (SLA de mesa de ayuda, niveles de soporte 1/2/3).
-- Tiempos de respuesta comprometidos ("4h hábiles").
+- Tiempos de respuesta (hoy ninguno publicado; ver § KPIs).
 - Razón social y datos legales en `lib/site-config.ts` (footer, contacto) y en el JSON-LD de `app/layout.tsx` (teléfono, email, dirección, redes sociales).
-- Compromisos públicos de servicio mostrados en la home (`COMMITMENTS` en `lib/company-data.ts`).
+- Compromisos públicos de servicio (`COMMITMENTS` en `lib/company-data.ts`, sección de `/nosotros`). **Hoy no hay ninguno confirmado:** la lista está vacía y la sección no se muestra.
+- **Retirado el 2026-10-10 por no estar aprobado o no tener condiciones conocidas** (no reintroducir sin autorización): rangos de precio y modelos de pago del FAQ, "5 días hábiles" para la propuesta, "$0" / "sin costo" / "gratis" para la primera reunión, "monitoreo 24/7", planes de soporte con plazos y garantía de 30 días. El texto respaldado es el del embudo: la reunión de descubrimiento es **sin compromiso**. La mesa de ayuda se describe "con SLA" sin cifras, como en § Líneas de servicio.
+- Afirmaciones legales: no hay política de tratamiento de datos publicada; el sitio no afirma protección legal (detalle en [SECURITY_GUIDE.md](SECURITY_GUIDE.md)).
 - Situaciones operativas ilustrativas de la home (`OPERATIONAL_SYMPTOMS`): no son casos ni estadísticas; mantenerlas genéricas y verosímiles.
 - Material visual (`lib/media.ts`): solo fotografías o capturas propias o autorizadas; nunca stock presentado como propio ni sistemas de clientes sin permiso.
 - Casos de éxito (`lib/cases-data.ts`): solo con autorización escrita del cliente y cifras aprobadas por él.

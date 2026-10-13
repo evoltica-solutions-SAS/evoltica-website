@@ -1,11 +1,12 @@
 /**
- * Preguntas frecuentes — contenido heredado sin cambios de la versión anterior.
+ * Preguntas frecuentes — contenido heredado de la versión anterior (se
+ * corrigieron las respuestas sobre costos, soporte y primer paso).
  *
  * TODO: INFORMACIÓN PENDIENTE DE EVOLTICA — validar con el negocio las
- * afirmaciones comerciales de estas respuestas (rangos de precio, planes de
- * soporte, garantía de 30 días, integraciones citadas, países atendidos).
- * BUSINESS_CONTEXT.md indica que el sitio "no publica precios", lo que
- * contradice la respuesta sobre costos.
+ * afirmaciones comerciales que quedan (plazos de proyecto, integraciones
+ * citadas, medidas de seguridad, países atendidos). El 2026-10-10 se retiraron,
+ * por no estar aprobados: rangos de precio, modelos de pago, planes de soporte
+ * con plazos, garantía de 30 días y "consultoría gratuita".
  */
 export interface FaqItem {
   question: string;
@@ -27,7 +28,9 @@ export const FAQS: FaqItem[] = [
   {
     question: "¿Cuál es el costo aproximado de un proyecto de transformación digital?",
     answer:
-      "El presupuesto depende del alcance, complejidad y tecnologías involucradas. Proyectos de automatización de procesos puntuales pueden partir desde $15M COP, mientras que implementaciones ERP o plataformas empresariales completas pueden estar entre $50M y $300M COP. Ofrecemos modelos de pago por hitos y también opciones de suscripción mensual. El primer paso es una consultoría gratuita donde dimensionamos exactamente lo que necesitas.",
+      // Sin precios, rangos ni modelos de pago: no hay aprobación comercial
+      // documentada (ADR-014, decisión 2026-10-10).
+      "El valor depende del alcance, la complejidad y las tecnologías involucradas, por eso no publicamos precios. Se define en una propuesta personalizada, después de entender tu operación. Puedes solicitar una cotización o empezar por una reunión de descubrimiento.",
   },
   {
     question: "¿Qué sucede si el proyecto tiene cambios durante el desarrollo?",
@@ -37,7 +40,9 @@ export const FAQS: FaqItem[] = [
   {
     question: "¿Ofrecen soporte y mantenimiento después de la implementación?",
     answer:
-      "Sí, ofrecemos planes de soporte post-implementación con distintos niveles de SLA. El plan básico incluye corrección de bugs y soporte por tickets (24-48h respuesta). El plan estándar añade soporte prioritario (4h respuesta) y monitoreo de infraestructura. El plan premium incluye un Technical Account Manager dedicado, monitoreo 24/7, mantenimiento evolutivo y upgrades de seguridad. Todos los proyectos incluyen 30 días de garantía gratuita post-lanzamiento.",
+      // Sin planes, plazos ni garantías: no están aprobados como compromiso
+      // comercial (decisión 2026-10-10). Solo el alcance declarado de la línea 04.
+      "Sí. Con los Servicios Administrados acompañamos la operación después de la implementación: administración del ERP, mesa de ayuda, soporte TI por niveles y gestión de usuarios y permisos. El alcance y los tiempos de atención se acuerdan con cada empresa antes de empezar.",
   },
   {
     question: "¿Pueden integrar el nuevo sistema con los sistemas que ya tenemos?",
@@ -65,6 +70,6 @@ export const FAQS: FaqItem[] = [
     question:
       "¿Cómo empiezo? ¿Cuál es el primer paso para trabajar con EVOLTICA?",
     answer:
-      "El proceso comienza con una consultoría inicial gratuita de 60 minutos donde conversamos sobre tu empresa, tus desafíos actuales y tus objetivos de negocio. No necesitas tener todo claro de antemano, nosotros hacemos las preguntas correctas. A partir de esa sesión, en los siguientes 5 días hábiles preparamos una propuesta técnica y económica detallada sin costo ni compromiso. Puedes agendar directamente por WhatsApp o completando el formulario de contacto.",
+      "El proceso comienza con una reunión de descubrimiento de 60 minutos, sin compromiso, donde conversamos sobre tu empresa, tus desafíos actuales y tus objetivos de negocio. No necesitas tener todo claro de antemano, nosotros hacemos las preguntas correctas. A partir de esa sesión, en los siguientes 5 días hábiles preparamos una propuesta técnica y económica detallada sin costo ni compromiso. Puedes agendar directamente por WhatsApp o completando el formulario de contacto.",
   },
 ];

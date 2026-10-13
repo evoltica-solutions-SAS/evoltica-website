@@ -109,7 +109,7 @@ export const ENGAGEMENT_STEPS: EngagementStep[] = [
     number: 1,
     title: "Reunión de descubrimiento",
     description: "Conversamos sobre tu negocio sin compromiso.",
-    outcome: "Sin costo · 60 minutos",
+    outcome: "Sin compromiso · 60 minutos",
   },
   {
     number: 2,
@@ -121,7 +121,7 @@ export const ENGAGEMENT_STEPS: EngagementStep[] = [
     number: 3,
     title: "Propuesta personalizada",
     description: "Plan, tiempos y valores claros y concretos.",
-    outcome: "En 5 días hábiles",
+    outcome: "Plan, tiempos y valores",
   },
   {
     number: 4,
@@ -272,7 +272,7 @@ export const SERVICES: ServiceData[] = [
     icon: Cloud,
     color: "blue",
     summary:
-      "Manejamos la tecnología que hace funcionar tu negocio — 24/7, segura, confiable y escalable.",
+      "Manejamos la tecnología que hace funcionar tu negocio — segura, confiable y escalable.",
     features: [
       "Hosting ERP administrado",
       "VPS y backups",

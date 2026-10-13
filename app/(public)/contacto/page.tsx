@@ -5,7 +5,7 @@ import { EngagementTimeline } from "@/components/sections/EngagementTimeline";
 import { FaqSection } from "@/components/sections/FaqSection";
 import { SITE } from "@/lib/site-config";
 
-const description = `Agenda una reunión de descubrimiento sin compromiso con ${SITE.legalName}. Consultoría, ERP con Odoo, automatización, infraestructura y soporte. Respondemos en menos de ${SITE.responseTime}.`;
+const description = `Agenda una reunión de descubrimiento sin compromiso con ${SITE.legalName}. Consultoría, ERP con Odoo, automatización, infraestructura y soporte.`;
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -21,10 +21,10 @@ export default function ContactoPage() {
         eyebrow="Contacto"
         title={
           <>
-            Hablemos de tu operación. <span className="text-slate-500">El primer paso es gratis.</span>
+            Hablemos de tu operación. <span className="text-slate-500">El primer paso es una conversación.</span>
           </>
         }
-        lead={`Cuéntanos qué quieres mejorar y agendamos una reunión de descubrimiento. Te respondemos en menos de ${SITE.responseTime}.`}
+        lead="Cuéntanos qué quieres mejorar y coordinamos una reunión de descubrimiento."
         breadcrumbs={[{ label: "Contacto", href: "/contacto" }]}
         className="pb-4 lg:pb-8"
       />

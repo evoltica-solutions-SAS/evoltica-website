@@ -125,16 +125,14 @@ export interface Commitment {
 }
 
 /**
- * Compromisos públicos ya declarados por la empresa (no son métricas de resultados).
- * El primero se presenta destacado. Cambiar cualquiera requiere autorización —
- * ver BUSINESS_CONTEXT.md.
+ * Compromisos públicos de servicio CONFIRMADOS por Evoltica (no son métricas de
+ * resultados). El primero se presenta destacado; con la lista vacía la sección
+ * no se muestra. Agregar uno requiere autorización — ver BUSINESS_CONTEXT.md.
+ *
+ * Vacía desde el 2026-10-10: "4 h", "5 días", "$0" y "24/7" se retiraron por no
+ * estar confirmados ni tener condiciones conocidas.
  */
-export const COMMITMENTS: Commitment[] = [
-  { value: "4 h", label: "Es lo máximo que esperas por una respuesta, en horario hábil." },
-  { value: "5 días", label: "Hábiles para tener la propuesta técnica en tus manos." },
-  { value: "$0", label: "Cuesta la consultoría inicial. Sin compromiso." },
-  { value: "24/7", label: "Monitoreo de la infraestructura que administramos." },
-];
+export const COMMITMENTS: Commitment[] = [];
 
 /**
  * Situaciones operativas frecuentes en una PYME. Son ilustrativas (no casos de

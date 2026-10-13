@@ -1,10 +1,12 @@
 # Fase 4 (solicitudes comerciales): diseño funcional y técnico + requisitos de la Fase 5
 
-> **Versión**: 1.0 · **Estado**: Draft (pendiente de aprobación; no implementado) · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.1 · **Estado**: Active (Fase 4 implementada como prototipo solo en desarrollo) · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
-Diseñar los flujos de **diagnóstico**, **consultoría**, **cotización personalizada** y **contacto desde una ficha** de la plataforma comercial propia ([ADR-014](../decisions/ADR-014-Commercial-Platform.md); Odoo solo como conector opcional futuro), y fijar los requisitos que la persistencia real de la Fase 5 debe cumplir ([ADR-015](../decisions/ADR-015-Persistence-Identity.md)). **Nada de esto está programado.**
+Diseñar los flujos de **diagnóstico**, **consultoría**, **cotización personalizada** y **contacto desde una ficha** de la plataforma comercial propia ([ADR-014](../decisions/ADR-014-Commercial-Platform.md); Odoo solo como conector opcional futuro), y fijar los requisitos que la persistencia real de la Fase 5 debe cumplir ([ADR-015](../decisions/ADR-015-Persistence-Identity.md)).
+
+**Estado (2026-10-10):** la Fase 4 está programada como **prototipo que solo funciona en `next dev`**. Ver [§ 10. Implementación](#10-implementación-2026-10-10). La Fase 5 sigue sin implementar.
 
 ## 1. Principios de la Fase 4
 
@@ -69,7 +71,7 @@ Hoy: `/contacto?servicio=<linea>&mensaje=<texto>` (real, condicionado a A1). En 
 | Prototipo (Fase 4) | **"Esta es una versión de prueba: revisamos que tus respuestas estén completas, pero esta solicitud no se guardó ni se envió a Evoltica."** + "Para hablar con el equipo ahora: [Enviar por el formulario de contacto] [WhatsApp]" |
 | Validación | Resumen de errores al inicio del paso ("Revisa 2 campos") con enlaces a cada campo; error junto a cada campo |
 | Error de servidor | "No pudimos procesar tu solicitud. No se guardó nada. Intenta de nuevo o escríbenos por WhatsApp." |
-| Fase 5, con persistencia **y** notificación confirmadas | "Registramos tu solicitud **DIAG-XXXX**." Añadir "Te contactaremos en menos de 4 horas hábiles" **solo** si el negocio confirma que ese compromiso (hoy publicado para `/contacto`) aplica también a estos flujos |
+| Fase 5, con persistencia **y** notificación confirmadas | "Registramos tu solicitud **DIAG-XXXX**." Sin plazo de respuesta: el "4 horas hábiles" **no está aprobado** (D4-4, 2026-10-10) |
 | Fase 5, persistida sin notificación confirmada | "Registramos tu solicitud **DIAG-XXXX**." (sin prometer contacto ni correo) |
 
 ## 5. Experiencia y accesibilidad
@@ -152,12 +154,12 @@ Entornos separados (desarrollo, preview, producción) con datos de prueba aislad
 
 ## 9. Decisiones pendientes
 
-**Antes de implementar la Fase 4**
-1. **D4-1** ¿El prototipo solo en desarrollo (recomendado) o visible en producción como "versión de prueba"?
-2. **D4-2** Corregir `/api/contact` (hallazgo A1) para que sea una salida real confiable.
-3. **D4-3** Aprobar campos, listas cerradas (procesos, tamaños, sectores, franjas) y los mensajes de § 4.
-4. **D4-4** ¿El compromiso "4 horas hábiles" aplica a diagnóstico, consultoría y cotización?
-5. **D4-5** Header (lockup apilado) y botón de micrófono (retirar), según la auditoría.
+**Antes de implementar la Fase 4 — resueltas el 2026-10-10**
+1. **D4-1** ✅ Prototipo **solo en desarrollo**. En producción no se aceptan solicitudes: aviso informativo y canales directos.
+2. **D4-2** ✅ `/api/contact` corregido: éxito solo con entrega confirmada por el canal (detalle en [SECURITY_GUIDE.md](../../SECURITY_GUIDE.md)).
+3. **D4-3** ✅ Este documento es la base, con la revisión de datos mínimos de § 10.
+4. **D4-4** ❌ **No aprobado.** El "4 horas hábiles" se retiró de todo el sitio y no se usa en estos flujos.
+5. **D4-5** ✅ Logo en dos líneas solo donde falta espacio (< 375 px y 1024–1279 px) y micrófono retirado.
 
 **Antes de implementar la Fase 5**
 6. Hosting de PostgreSQL, acceso a datos (Drizzle o Prisma) y proveedor de identidad (ADR-015).
@@ -166,3 +168,47 @@ Entornos separados (desarrollo, preview, producción) con datos de prueba aislad
 9. Política de tratamiento de datos, finalidades, retención y canal de derechos (Evoltica y asesoría legal).
 10. RPO/RTO y responsable de la operación (copias de respaldo, alertas).
 11. Si alguna vez se integrará un CRM u Odoo (conector opcional) y en qué sentido.
+
+## 10. Implementación (2026-10-10)
+
+### Qué existe
+
+| Pieza | Ubicación |
+|---|---|
+| Rutas (noindex, fuera del sitemap) | `app/(public)/diagnostico`, `consultoria`, `cotizar` — `?solucion=<slug>` preselecciona si el slug está publicado |
+| Server action | `app/(public)/actions.ts` → `submitCommercialRequestAction(kind, formData)` |
+| Servicio de aplicación | `lib/server/services/commercial-requests.ts`: producción → `UNAVAILABLE` sin procesar datos; `next dev` → valida y responde `PROTOTYPE` (no guarda ni envía) |
+| Bandera | `COMMERCIAL_PROTOTYPE_ENABLED` en `lib/server/env.ts` (= `next dev`; ninguna variable de entorno la activa) |
+| Dominio | `lib/domain/commercial.ts` (listas cerradas, entradas tipadas y el contrato `CommercialRequest` de la Fase 5) |
+| Validación compartida | `lib/commercial/validation.ts` (cliente y servidor), etiquetas en `options.ts`, resumen en `summary.ts` |
+| UI | `components/commercial/*` y `hooks/useCommercialForm.ts` |
+
+### Revisión de datos mínimos (cambios frente a § 3)
+
+- **Teléfono opcional:** el correo basta para responder; el teléfono solo si la persona prefiere WhatsApp.
+- **Sector opcional** en el diagnóstico; el tamaño sigue siendo obligatorio (dimensiona el alcance).
+- **Sin casilla de consentimiento:** no hay política de tratamiento publicada y el prototipo no guarda nada. Se muestra una nota y la autorización (Ley 1581, `ConsentRecord`) queda como **requisito de la Fase 5**.
+- **Cotización:** la solución llega **preseleccionada pero editable** (no bloqueada) desde `?solucion=`.
+- **Honeypot** activo; el tiempo mínimo de llenado y el límite por IP quedan para la Fase 5 (nada se guarda ni se envía hoy).
+
+### Mensajes vigentes
+
+| Situación | Texto |
+|---|---|
+| Prototipo (dev) | "Versión de prueba: revisamos que tus respuestas estén completas, pero esta solicitud no se guardó ni se envió a Evoltica." + WhatsApp y correo con el resumen precargado (la persona lo envía desde su aplicación) |
+| Producción | "Este formulario todavía no está habilitado. Aún no podemos recibir ni guardar solicitudes por aquí de forma segura…" + WhatsApp y correo |
+| Error de servidor | "No pudimos procesar tu solicitud y no se guardó nada. Intenta de nuevo o escríbenos por WhatsApp." |
+
+### Sin cambios a propósito
+
+- Las fichas del catálogo **siguen apuntando a `/contacto`** (§ 2): los nuevos formularios no reciben solicitudes reales, así que no se enlazan desde el sitio público. La matriz de § 2 se aplicará con la Fase 5.
+- Sin "cita", "agendada", "recibida" ni plazos de respuesta en ningún texto.
+
+### Cierre de correcciones (2026-10-10)
+
+- Retiradas del sitio las afirmaciones comerciales sin aprobación (precios del FAQ, "5 días hábiles", "$0"/"sin costo", "24/7"); detalle en [BUSINESS_CONTEXT § Contenido sensible](../../BUSINESS_CONTEXT.md#contenido-comercial-y-legal-sensible).
+- Retirada la frase de protección legal del formulario de contacto; los requisitos legales previos a almacenar datos están en [SECURITY_GUIDE](../../SECURITY_GUIDE.md).
+- El mensaje de éxito de `/api/contact` dice solo que la solicitud se envió al canal de atención.
+- El resumen de errores de los formularios sigue el orden visual de los campos (`order` de `ErrorSummary`).
+- La configuración de `EMAIL_WEBHOOK_URL` en Vercel **no está verificada** (sin acceso desde el repositorio).
+

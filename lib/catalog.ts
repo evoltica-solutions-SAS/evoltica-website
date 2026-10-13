@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { ENGAGEMENT_STEPS, SERVICES, type ServiceData } from "@/lib/services-data";
 import { getWhatsAppUrl } from "@/lib/utils";
+import type { SolutionOption } from "@/lib/commercial/options";
 import {
   catalogViolations,
   PRICED_MODES,
@@ -158,6 +159,14 @@ export function getLine(slug: ServiceLineSlug): ServiceData {
   const line = SERVICES.find((service) => service.slug === slug);
   if (!line) throw new Error(`Línea inexistente: ${slug}`);
   return line;
+}
+
+/** Soluciones publicadas en forma serializable para los formularios de la Fase 4. */
+export function solutionOptions(): SolutionOption[] {
+  return PUBLISHED_SOLUTIONS.map((solution) => {
+    const line = getLine(solution.line);
+    return { slug: solution.slug, title: solution.title, lineTitle: line.title, note: line.note };
+  });
 }
 
 /** Etiqueta y explicación de cada modalidad comercial. */

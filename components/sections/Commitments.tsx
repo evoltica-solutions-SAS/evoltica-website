@@ -9,6 +9,8 @@ import { scaleIn } from "@/hooks/useScrollAnimation";
  */
 /** `index` solo en páginas con capítulos numerados. */
 export function Commitments({ index }: { index?: string }) {
+  // Sin compromisos confirmados no hay sección (no se rellena con promesas).
+  if (COMMITMENTS.length === 0) return null;
   const [featured, ...rest] = COMMITMENTS;
   const [featuredNumber, featuredUnit] = featured.value.split(" ");
 
@@ -39,7 +41,7 @@ export function Commitments({ index }: { index?: string }) {
             </RevealItem>
           ))}
           <RevealItem as="li" className="pt-6 text-xs leading-relaxed text-slate-400">
-            Compromisos de servicio de Evoltica. Sin costos ocultos ni letra pequeña.
+            Compromisos de servicio confirmados por Evoltica.
           </RevealItem>
         </RevealGroup>
       </div>

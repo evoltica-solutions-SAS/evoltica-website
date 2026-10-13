@@ -19,7 +19,9 @@ export const SITE = {
   phoneDisplay: "+57 314 403 6151",
   phoneHref: `tel:+${WHATSAPP_NUMBER}`,
   officeHours: "Lunes a viernes, 8:00 a. m. – 6:00 p. m.",
-  responseTime: "4 horas hábiles",
+  // Sin tiempo de respuesta publicado: el "4 horas hábiles" heredado NO está
+  // aprobado como compromiso comercial (decisión 2026-10-10). No reintroducir
+  // un plazo sin autorización explícita (BUSINESS_CONTEXT § Contenido sensible).
 } as const;
 
 // TODO: INFORMACIÓN PENDIENTE DE EVOLTICA — confirmar que estos perfiles existen

@@ -1,6 +1,6 @@
 # Sistema de diseño
 
-> **Versión**: 3.4 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 3.5 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -145,7 +145,7 @@ Ver [ADR-009](docs/decisions/ADR-009-Motion-Navigation-Experience.md). Framer Mo
 
 ## Logo y marca
 
-El logo vive en `public/brand/logo.png` y se renderiza vía `components/layout/Logo.tsx`. El PNG original tiene margen transparente superior; `Logo` lo encuadra con CSS (`scale`/`translate`) sin alterar el archivo. En el header de escritorio entre 1024 y 1279 px se muestra solo el isotipo (prop `wordmarkClassName` de `Logo`) para que quepa la navegación; el wordmark nunca se parte en dos líneas (`whitespace-nowrap`). Cambios al logo o a la paleta requieren autorización explícita (ver [AI_GUIDELINES.md § 12](AI_GUIDELINES.md#12-qué-nunca-modificar-sin-autorización) y [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md)).
+El logo vive en `public/brand/logo.png` y se renderiza vía `components/layout/Logo.tsx`. El PNG original tiene margen transparente superior; `Logo` lo encuadra con CSS (`scale`/`translate`) sin alterar el archivo. En el header, el nombre usa la variante **adaptable** (`wordmarkLayout="adaptive"`, autorizada el 2026-10-10): una línea por defecto y **dos líneas controladas** (EVOLTICA / SOLUTIONS) solo donde no cabe, por debajo de 375 px y entre 1024 y 1279 px, con los mismos colores, peso y tamaño. En ese rango de escritorio el menú usa menos separación (`lg:max-xl`) para no desbordar. Fuera de esa variante el nombre nunca se parte (`whitespace-nowrap`), y el isotipo nunca aparece sin el nombre en el header. Cambios al logo o a la paleta requieren autorización explícita (ver [AI_GUIDELINES.md § 12](AI_GUIDELINES.md#12-qué-nunca-modificar-sin-autorización) y [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md)).
 
 ## Reglas de uso de Tailwind
 

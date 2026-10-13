@@ -21,7 +21,7 @@ Brief condensado para escribir o editar contenido/copy del sitio.
 
 ## Nunca sin autorización
 
-Precios, garantías, tiempos de respuesta comprometidos ("4h hábiles"), razón social y datos legales — son afirmaciones de la empresa hacia clientes reales.
+Precios, garantías, tiempos de respuesta comprometidos (hoy no hay ninguno aprobado; el "4h hábiles" heredado se retiró el 2026-10-10), razón social y datos legales — son afirmaciones de la empresa hacia clientes reales.
 
 ## Documentación completa
 

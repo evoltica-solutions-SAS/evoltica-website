@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { SITE } from "@/lib/site-config";
 
 interface ContactPayload {
   name: string;
@@ -27,6 +28,23 @@ function validatePhone(phone: string): boolean {
 
 function sanitize(str: string): string {
   return str.trim().replace(/[<>]/g, "");
+}
+
+const WEBHOOK_TIMEOUT_MS = 10_000;
+
+/**
+ * Respuesta cuando la solicitud NO llegó a Evoltica. El mensaje es seguro para
+ * el usuario (sin detalles internos) y ofrece canales directos reales.
+ */
+function notDelivered(code: "CHANNEL_UNAVAILABLE" | "DELIVERY_FAILED", status: 502 | 503) {
+  return NextResponse.json(
+    {
+      success: false,
+      code,
+      message: `No pudimos enviar tu solicitud y no quedó registrada. Escríbenos por WhatsApp al ${SITE.phoneDisplay} o a ${SITE.email}.`,
+    },
+    { status }
+  );
 }
 
 export async function POST(request: NextRequest) {
@@ -78,14 +96,24 @@ export async function POST(request: NextRequest) {
       ip: request.headers.get("x-forwarded-for") ?? "unknown",
     };
 
-    // Primary channel: email via environment variable webhook/SMTP
-    // This is designed for easy integration with Resend, SendGrid, or any email provider
+    // Único canal de entrega: el webhook configurado (EMAIL_WEBHOOK_URL).
+    // El éxito se responde SOLO si el canal acepta la solicitud (HTTP 2xx).
+    // Sin canal o con fallo, la solicitud NO se entregó y se responde error:
+    // nunca se confirma una recepción que no ocurrió (auditoría Fase 3, A1).
     const emailWebhookUrl = process.env.EMAIL_WEBHOOK_URL;
     const notificationEmail = process.env.NOTIFICATION_EMAIL || "comercial@evoltica.com";
 
-    if (emailWebhookUrl) {
-      // Integration with Resend, Nodemailer webhook, Make, n8n, etc.
-      const webhookResponse = await fetch(emailWebhookUrl, {
+    if (!emailWebhookUrl) {
+      console.error("Contact API: EMAIL_WEBHOOK_URL no está configurada; la solicitud no se entregó.");
+      if (process.env.NODE_ENV === "development") {
+        console.log("📧 Solicitud de contacto NO entregada (sin canal en desarrollo):", sanitizedData);
+      }
+      return notDelivered("CHANNEL_UNAVAILABLE", 503);
+    }
+
+    let webhookResponse: Response;
+    try {
+      webhookResponse = await fetch(emailWebhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,26 +124,25 @@ export async function POST(request: NextRequest) {
           subject: `[EVOLTICA] Nueva consultoría: ${sanitizedData.service} — ${sanitizedData.company}`,
           data: sanitizedData,
         }),
+        signal: AbortSignal.timeout(WEBHOOK_TIMEOUT_MS),
       });
-
-      if (!webhookResponse.ok) {
-        console.error(
-          "Webhook notification failed:",
-          await webhookResponse.text()
-        );
-        // Non-blocking: we still return success to the user
-      }
-    } else {
-      // Fallback: log to console in development
-      if (process.env.NODE_ENV === "development") {
-        console.log("📧 New contact form submission:", sanitizedData);
-      }
+    } catch (error) {
+      // Red caída, DNS o tiempo agotado. Sin datos personales en el log.
+      console.error("Contact API: el canal de entrega no respondió:", error instanceof Error ? error.name : "unknown");
+      return notDelivered("DELIVERY_FAILED", 502);
     }
 
+    if (!webhookResponse.ok) {
+      console.error(`Contact API: el canal de entrega rechazó la solicitud (HTTP ${webhookResponse.status}).`);
+      return notDelivered("DELIVERY_FAILED", 502);
+    }
+
+    // 2xx solo prueba que el canal aceptó la solicitud, no que un correo llegó
+    // ni que alguien la leyó: el mensaje no afirma más que eso.
     return NextResponse.json(
       {
         success: true,
-        message: "Tu solicitud fue recibida. Te contactaremos en menos de 4 horas hábiles.",
+        message: "Tu solicitud se envió a nuestro canal de atención.",
       },
       { status: 200 }
     );

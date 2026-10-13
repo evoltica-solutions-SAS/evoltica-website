@@ -1,6 +1,6 @@
 # Changelog de arquitectura
 
-> **Versión**: 1.2 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.3 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -21,6 +21,11 @@ No cubre: el detalle de cada decisión (contexto, alternativas, consecuencias) �
 ---
 
 ## Historial
+
+### 2026-10-10 — Fase 4 como prototipo y primera capa de servicios de aplicación
+**Tipo**: Hito estructural (implementa ADR-014 dentro de los principios de ADR-015; sin ADR nuevo)
+**ADR**: [ADR-014](docs/decisions/ADR-014-Commercial-Platform.md) — `Accepted`; [ADR-015](docs/decisions/ADR-015-Persistence-Identity.md) — `Proposed` (sin cambios)
+**Resumen**: `/diagnostico`, `/consultoria` y `/cotizar` funcionan solo en `next dev` (en producción, aviso y canales directos) a través de `lib/server/services/commercial-requests.ts`, sin persistencia. `/api/contact` responde éxito solo con entrega confirmada. Retirado el plazo "4 horas hábiles" no aprobado. Detalle: [diseño de la Fase 4 § 10](docs/architecture/2026-10-08-diseno-fase-4-y-requisitos-fase-5.md).
 
 ### 2026-10-08 — Plataforma comercial propia y catálogo de soluciones
 **Tipo**: Decisión de producto + arquitectura

@@ -44,8 +44,7 @@ export function ContactSection({ showHeading = true }: ContactSectionProps) {
               <span className="block lg:ml-[14%]">tu operación.</span>
             </h2>
             <p className="mt-8 max-w-lg text-lead text-slate-300 lg:ml-[14%]">
-              Cuéntanos qué quieres mejorar. Te respondemos en menos de {SITE.responseTime} y la primera reunión
-              no tiene costo.
+              Cuéntanos qué quieres mejorar. La primera reunión es sin compromiso.
             </p>
           </Reveal>
         )}

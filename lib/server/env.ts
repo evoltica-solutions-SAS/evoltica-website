@@ -9,3 +9,11 @@ import "server-only";
  * producción, a propósito.
  */
 export const PORTAL_DEMO_ENABLED = process.env.NODE_ENV === "development";
+
+/**
+ * Prototipo de las solicitudes comerciales (Fase 4): SOLO en `next dev`, con el
+ * mismo criterio. En producción los formularios no se muestran y el servidor no
+ * acepta envíos hasta que exista persistencia segura y un canal de recepción
+ * (decisión 2026-10-10).
+ */
+export const COMMERCIAL_PROTOTYPE_ENABLED = process.env.NODE_ENV === "development";

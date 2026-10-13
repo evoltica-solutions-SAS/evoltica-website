@@ -1,6 +1,6 @@
 # Arquitectura
 
-> **Versión**: 1.7 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.8 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -53,10 +53,13 @@ app/
   (auth)/                    # login, registro, recuperar/restablecer contraseña (deshabilitados hasta ADR-013)
   (portal)/app/              # Portal de clientes: dashboard, servicios, productos, suscripciones, cloud,
                              #   facturación, pagos, tickets, notificaciones, perfil (dinámico, noindex)
+  (public)/diagnostico|consultoria|cotizar/  # Fase 4: prototipo solo en `next dev`; en producción, aviso +
+                             #   canales directos. noindex y fuera del sitemap (no reciben solicitudes reales)
+  (public)/actions.ts        # Server action de las solicitudes comerciales (delega en lib/server/services)
   (admin)/admin/             # Fase 5 (pendiente)
   not-found.tsx              # 404 de marca (monta el chrome público: vive en el root layout)
   sitemap.ts                 # Sitemap generado desde lib/ (reemplaza public/sitemap.xml)
-  api/contact/route.ts       # Único endpoint API: validación + envío del formulario de contacto
+  api/contact/route.ts       # Único endpoint API: validación + envío; éxito solo si el canal confirma la entrega
   globals.css                # Tokens CSS y clases de componente (@layer base/components/utilities)
 components/
   layout/                    # Navbar, Footer, Logo, MotionProvider, BrandIntro, PageTransition, ThemeToggle (chrome global)
@@ -66,7 +69,8 @@ components/
   ui/                        # Piezas reutilizables (Reveal, SplitReveal, ChapterBackdrop, StrikeText, Magnetic, HeroPrompt,
                              #   SectionHeading, PageHero, ButtonLink, CtaBand, Trama, ContactForm, Accordion,
                              #   Breadcrumbs, JsonLd, WhatsAppButton)
-hooks/                       # useScrollAnimation — variantes de motion
+  commercial/                # Formularios de la Fase 4 (diagnóstico, consultoría, cotización), aviso de no disponible
+hooks/                       # useScrollAnimation — variantes de motion · useCommercialForm — envío de la Fase 4
 lib/                         # Contenido y configuración tipados + utilidades puras
   site-config.ts             #   Identidad, contacto, navegación (MAIN_NAV, PRIMARY_CTA), SITE_URL
   services-data.ts           #   5 líneas de servicio + embudo (ENGAGEMENT_STEPS)
@@ -81,6 +85,8 @@ lib/                         # Contenido y configuración tipados + utilidades p
   server/                    #   Solo servidor ("server-only"): contratos de datos (data/) y de identidad (auth/),
                              #   adaptadores (data/adapters/demo = ficticio, solo next dev), env.ts, portal.ts
   portal/                    #   Etiquetas de estado, formatos es-CO, navegación, validación de tickets, params
+  commercial/                #   Fase 4: listas y etiquetas, validación compartida cliente/servidor, resumen
+  server/services/           #   Servicios de aplicación (hoy: commercial-requests.ts, sin persistencia)
   auth-cookies.ts            #   Nombres de cookies de sesión (compartido con middleware)
   utils.ts                   #   cn() (tailwind-merge con la escala tipográfica propia), WhatsApp
 middleware.ts                # Redirección optimista de /app y /admin sin cookie de sesión (no autoriza)
@@ -95,7 +101,8 @@ public/                      # Assets estáticos, íconos, manifest, robots.txt
 - Los datos de contenido (servicios, valores, FAQ, contacto, navegación) van en `lib/` como constantes tipadas con su tipo exportado. Los componentes los consumen; no los duplican.
 - Rutas nuevas: se agregan en `app/`, en `app/sitemap.ts` y, si son navegación principal, en `MAIN_NAV` (`lib/site-config.ts`).
 - Server Components por defecto; la interactividad (motion, formulario, menú) se aísla en componentes cliente pequeños (`Reveal`, `ContactForm`, `Navbar`...) para que las secciones sigan siendo de servidor.
-- No hay capa de base de datos. Si se necesita persistencia o envío de datos, se hace vía `fetch` a un webhook externo configurado por variable de entorno (ver `EMAIL_WEBHOOK_URL` en `app/api/contact/route.ts`), nunca acoplando un proveedor específico en el código.
+- No hay capa de base de datos. Si se necesita persistencia o envío de datos, se hace vía `fetch` a un webhook externo configurado por variable de entorno (ver `EMAIL_WEBHOOK_URL` en `app/api/contact/route.ts`), nunca acoplando un proveedor específico en el código. Una solicitud solo se confirma como enviada si ese canal la acepta.
+- Las páginas no hablan con datos ni integraciones directamente: llaman a un **servicio de aplicación** en `lib/server/services/` (ADR-014/015). Hoy el de solicitudes comerciales no persiste nada; la Fase 5 le añadirá el adaptador real sin cambiar las pantallas.
 
 ## Regla de ubicación de código nuevo
 

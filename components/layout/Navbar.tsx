@@ -53,7 +53,7 @@ function ServicesMenu({ onNavigate }: { onNavigate: () => void }) {
         <div>
           <p className="eyebrow">¿Por dónde empezar?</p>
           <p className="mt-4 text-sm leading-relaxed text-slate-300">
-            Todo proyecto inicia con una reunión de descubrimiento gratuita. Entendemos tu negocio antes de
+            Todo proyecto inicia con una reunión de descubrimiento sin compromiso. Entendemos tu negocio antes de
             proponer tecnología.
           </p>
         </div>
@@ -168,10 +168,10 @@ export function Navbar() {
         />
         <nav
           aria-label="Navegación principal"
-          className="container-custom flex h-16 items-center justify-between gap-6 lg:h-[4.5rem]"
+          className="container-custom flex h-16 items-center justify-between gap-6 lg:h-[4.5rem] lg:max-xl:gap-3"
         >
           <span style={at(0)} className="animate-enter">
-            <Logo priority wordmarkClassName="lg:max-xl:sr-only" />
+            <Logo priority wordmarkLayout="adaptive" />
           </span>
 
           {/* Desktop */}
@@ -179,7 +179,7 @@ export function Navbar() {
             {MAIN_NAV.map((item, index) => {
               const active = isActivePath(pathname, item.href);
               const linkClass = cn(
-                "group relative inline-flex items-baseline gap-1.5 whitespace-nowrap px-2.5 py-2 text-[0.94rem] font-medium transition-colors xl:px-3.5",
+                "group relative inline-flex items-baseline gap-1.5 whitespace-nowrap px-1.5 py-2 text-[0.94rem] font-medium transition-colors xl:px-3.5",
                 active ? "text-white" : "text-slate-300 hover:text-white"
               );
               // Índice editorial + subrayado que se dibuja al hover.
@@ -192,7 +192,7 @@ export function Navbar() {
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "absolute inset-x-2.5 -bottom-0.5 h-px origin-left bg-primary transition-transform duration-500 ease-out xl:inset-x-3.5",
+                    "absolute inset-x-1.5 -bottom-0.5 h-px origin-left bg-primary transition-transform duration-500 ease-out xl:inset-x-3.5",
                     active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                   )}
                 />
@@ -256,9 +256,9 @@ export function Navbar() {
             })}
           </ul>
 
-          <div style={at(0.3)} className="hidden shrink-0 animate-enter items-center gap-4 lg:flex xl:gap-6">
+          <div style={at(0.3)} className="hidden shrink-0 animate-enter items-center gap-3 lg:flex xl:gap-6">
             <ThemeToggle />
-            <Link href={PRIMARY_CTA.href} className="btn-primary !min-h-[2.75rem] whitespace-nowrap px-5 text-sm">
+            <Link href={PRIMARY_CTA.href} className="btn-primary !min-h-[2.75rem] whitespace-nowrap px-4 text-sm xl:px-5">
               {PRIMARY_CTA.label}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>

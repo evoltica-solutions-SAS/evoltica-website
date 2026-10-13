@@ -1,12 +1,12 @@
 # Propuesta: plataforma comercial B2B (marketplace, cotizaciones, portal y administración)
 
-> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.2 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
 Arquitectura actualizada tras la nueva dirección del negocio (2026-10-08): **Evoltica tiene una plataforma propia, independiente de Odoo**, que combina sitio corporativo, catálogo de soluciones, diagnóstico y consultoría, cotizaciones y pedidos, portal de clientes, soporte, comunicaciones y administración. Este documento **reemplaza la recomendación** de [la evaluación anterior](2026-10-08-evaluacion-backend-y-plan-integracion.md) (Odoo como fuente de verdad). Odoo pasa a ser una **integración opcional**.
 
-**Aprobación (2026-10-08):** dirección, embudo, `/soluciones`, política de precios, Desarrollo e Integraciones a la medida y registro por invitación/aprobación → [ADR-014](../decisions/ADR-014-Commercial-Platform.md). Persistencia e identidad: solo principios → [ADR-015](../decisions/ADR-015-Persistence-Identity.md); proveedores pendientes. **Implementado:** Fase 3 (catálogo). Fases 4+ pendientes.
+**Aprobación (2026-10-08):** dirección, embudo, `/soluciones`, política de precios, Desarrollo e Integraciones a la medida y registro por invitación/aprobación → [ADR-014](../decisions/ADR-014-Commercial-Platform.md). Persistencia e identidad: solo principios → [ADR-015](../decisions/ADR-015-Persistence-Identity.md); proveedores pendientes. **Implementado:** Fase 3 (catálogo) y Fase 4 como **prototipo solo en desarrollo** (2026-10-10, ver [diseño de la Fase 4](2026-10-08-diseno-fase-4-y-requisitos-fase-5.md)). Fases 5+ pendientes.
 
 ---
 
@@ -154,7 +154,7 @@ CloudResource ─ ContractedService (solo lectura hasta aprobar acciones)
 | 3. Interés | Solución del catálogo si la conoce (opcional) | No |
 | 4. Contacto | Nombre, empresa, correo corporativo, teléfono/WhatsApp, disponibilidad preferida (franjas), aceptación de la política de datos | Sí |
 
-Al enviar se crea una `CommercialRequest` con referencia, y la confirmación dice: "Recibimos tu solicitud **DIAG-XXXX**. Te contactaremos en menos de 4 horas hábiles". Ese compromiso ya existe (`SITE.responseTime`). Nunca se dice "cita confirmada" sin una integración de agenda. Protección: validación en el servidor, honeypot, límite por IP y correo, y CAPTCHA solo si hay abuso (decisión de fricción).
+Con persistencia (Fase 5) se crea una `CommercialRequest` con referencia y la confirmación dice: "Registramos tu solicitud **DIAG-XXXX**." **Sin plazo de respuesta:** el "4 horas hábiles" heredado no está aprobado como compromiso comercial y se retiró del sitio (2026-10-10). Nunca se dice "cita confirmada" sin una integración de agenda. Protección: validación en el servidor, honeypot, límite por IP y correo, y CAPTCHA solo si hay abuso (decisión de fricción).
 
 ---
 
@@ -273,9 +273,11 @@ Cada hito ejecuta `npm run lint`, `npx tsc --noEmit` y `npm run build` en el rep
 
 ## 12. Implementado, simulado y pendiente (hoy)
 
-- **Implementado:** sitio público, separación de superficies, guardas de servidor, middleware, contratos y validación de tickets y adjuntos.
-- **Simulado (solo `next dev`):** todos los datos del portal y las escrituras ("no se guardó ni se envió").
-- **Pendiente:** base de datos, identidad, correo, archivos, pagos, facturación fiscal, agenda, Cloud, administración, catálogo y diagnóstico.
+Actualizado el 2026-10-10.
+
+- **Implementado:** sitio público, separación de superficies, guardas de servidor, middleware, contratos y validación de tickets y adjuntos, catálogo `/soluciones` (Fase 3), y `/api/contact` con éxito **solo** si el canal configurado confirma la entrega.
+- **Simulado (solo `next dev`):** todos los datos del portal y sus escrituras; los formularios `/diagnostico`, `/consultoria` y `/cotizar` (validan, no guardan ni envían). En producción esas páginas muestran un aviso y canales directos (WhatsApp, correo).
+- **Pendiente:** base de datos, identidad, correo transaccional, archivos, pagos, facturación fiscal, agenda, Cloud, administración y la persistencia real de las solicitudes comerciales.
 
 ## 13. Decisiones que requieren aprobación
 

@@ -2,7 +2,7 @@ import { MessageCircle } from "lucide-react";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Reveal } from "@/components/ui/Reveal";
 import { Trama } from "@/components/ui/Trama";
-import { PRIMARY_CTA, SITE } from "@/lib/site-config";
+import { PRIMARY_CTA } from "@/lib/site-config";
 import { getWhatsAppUrl } from "@/lib/utils";
 
 interface CtaBandProps {
@@ -15,10 +15,10 @@ export function CtaBand({
   title = (
     <>
       Hablemos de tu operación.
-      <span className="block font-light text-slate-400">El primer paso no tiene costo.</span>
+      <span className="block font-light text-slate-400">El primer paso es una conversación sin compromiso.</span>
     </>
   ),
-  lead = `Agenda una reunión de descubrimiento sin compromiso. Respondemos en menos de ${SITE.responseTime}.`,
+  lead = "Agenda una reunión de descubrimiento sin compromiso.",
 }: CtaBandProps) {
   return (
     <section className="relative overflow-hidden border-t border-white/[0.08] bg-surface-alt py-24 lg:py-32">

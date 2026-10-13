@@ -8,7 +8,7 @@ import { SplitReveal } from "@/components/ui/SplitReveal";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { ChapterBackdrop } from "@/components/ui/ChapterBackdrop";
 import { TRAMA_APEX, TRAMA_CROSS } from "@/components/ui/Trama";
-import { PRIMARY_CTA, SITE } from "@/lib/site-config";
+import { PRIMARY_CTA } from "@/lib/site-config";
 import { getWhatsAppUrl } from "@/lib/utils";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -79,8 +79,7 @@ export function Finale({ index = "08" }: { index?: string }) {
             transition={{ duration: 0.8, ease: EASE, delay: 0.35 }}
           >
             <p className="text-lead font-medium text-ink-900">
-              Una conversación de 60 minutos, sin costo. Te respondemos en menos de {SITE.responseTime} y salimos
-              con una idea clara de qué mejorar primero.
+              Una conversación de 60 minutos, sin compromiso, para salir con una idea clara de qué mejorar primero.
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Magnetic className="flex sm:inline-flex">

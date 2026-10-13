@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { useForm, type UseFormRegisterReturn } from "react-hook-form";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertCircle, CheckCircle2, Loader2, Send } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { AlertCircle, CheckCircle2, Loader2, MessageCircle, Send } from "lucide-react";
+import { cn, getWhatsAppUrl } from "@/lib/utils";
 import { SERVICES } from "@/lib/services-data";
-import { SITE } from "@/lib/site-config";
 
 /**
  * Formulario de contacto. Las reglas de validación DEBEN coincidir con
@@ -66,6 +65,8 @@ function fieldA11y(id: string, hasError: boolean, registration: UseFormRegisterR
 export function ContactForm({ className }: { className?: string }) {
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  // El servidor confirma la entrega real; si no la hubo, se ofrece WhatsApp.
+  const [notDelivered, setNotDelivered] = useState(false);
 
   const {
     register,
@@ -94,6 +95,7 @@ export function ContactForm({ className }: { className?: string }) {
   const onSubmit = async (data: ContactFormData) => {
     setSubmitStatus("loading");
     setErrorMessage("");
+    setNotDelivered(false);
 
     try {
       const response = await fetch("/api/contact", {
@@ -104,6 +106,8 @@ export function ContactForm({ className }: { className?: string }) {
       const result: { message?: string } = await response.json();
 
       if (!response.ok) {
+        // 502/503: validación correcta, pero el canal de entrega no la recibió.
+        setNotDelivered(response.status === 502 || response.status === 503);
         throw new Error(result.message || "No pudimos enviar el formulario.");
       }
 
@@ -136,7 +140,7 @@ export function ContactForm({ className }: { className?: string }) {
             </div>
             <h3 className="text-2xl font-semibold text-white">¡Solicitud enviada!</h3>
             <p className="mx-auto mt-3 max-w-sm leading-relaxed text-slate-400">
-              Recibimos tu información. Nuestro equipo te contactará en menos de {SITE.responseTime}.
+              Tu solicitud se envió a nuestro canal de atención. Si quieres agregar algo, escríbenos por WhatsApp.
             </p>
             <button type="button" onClick={() => setSubmitStatus("idle")} className="btn-secondary mt-8">
               Enviar otra solicitud
@@ -286,15 +290,30 @@ export function ContactForm({ className }: { className?: string }) {
                   role="alert"
                 >
                   <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" aria-hidden="true" />
-                  <p className="text-sm leading-relaxed text-red-300">{errorMessage}</p>
+                  <div>
+                    <p className="text-sm leading-relaxed text-red-300">{errorMessage}</p>
+                    {notDelivered && (
+                      <a
+                        href={getWhatsAppUrl()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-white underline underline-offset-4"
+                      >
+                        <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                        Escribir por WhatsApp
+                      </a>
+                    )}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
             <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs leading-relaxed text-slate-400 sm:max-w-xs">
-                <span className="text-primary-400">*</span> Campos obligatorios. Tu información está protegida bajo
-                la Ley 1581 de Habeas Data.
+                {/* Sin política de tratamiento publicada no se afirma ninguna garantía legal
+                    (pendiente de Evoltica; ver SECURITY_GUIDE § Datos personales). */}
+                <span className="text-primary-400">*</span> Campos obligatorios. Usamos estos datos para responder tu
+                consulta.
               </p>
               <button
                 type="submit"

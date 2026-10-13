@@ -1,6 +1,6 @@
 # Roadmap (24 meses)
 
-> **Versión**: 1.3 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.4 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -125,7 +125,7 @@ Antes de agregar superficie nueva, se consolida la base: seguridad, rendimiento,
 - **Funcionalidades**: automatización del flujo lead → CRM interno → asignación, usando las mismas herramientas que Evoltica ofrece a clientes (n8n/Make, ver [BUSINESS_CONTEXT.md](BUSINESS_CONTEXT.md)) como caso de uso propio ("dogfooding").
 - **Prioridad**: Media.
 - **Dependencias**: Fase 12 (Integraciones) para tener un CRM/destino al cual automatizar el envío.
-- **Criterios de terminado**: un lead nuevo llega al sistema interno correspondiente sin intervención manual; tiempo de primera respuesta medido y dentro del compromiso de "4h hábiles".
+- **Criterios de terminado**: un lead nuevo llega al sistema interno correspondiente sin intervención manual; tiempo de primera respuesta medido (el compromiso de tiempo lo define el negocio; hoy no hay ninguno aprobado).
 
 ### Fase 12 — Integraciones
 - **Objetivo**: conectar el sitio con las herramientas reales de operación comercial de Evoltica.

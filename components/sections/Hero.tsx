@@ -7,7 +7,6 @@ import { Trama } from "@/components/ui/Trama";
 import { HeroPrompt } from "@/components/ui/HeroPrompt";
 import { SERVICES } from "@/lib/services-data";
 import { BRAND_MEDIA } from "@/lib/media";
-import { SITE } from "@/lib/site-config";
 
 /** Retraso relativo a la apertura de la intro (0 s si la intro no corre en esta visita). */
 const at = (seconds: number): React.CSSProperties => ({
@@ -67,7 +66,7 @@ export function Hero() {
             <HeroPrompt />
           </div>
           <p style={at(0.37)} className="mt-3 animate-enter text-xs text-slate-400">
-            Lo lee una persona del equipo. Te respondemos en menos de {SITE.responseTime}.
+            Lo lee una persona del equipo.
           </p>
         </div>
 
@@ -84,7 +83,9 @@ export function Hero() {
                 href={`/servicios/${service.slug}`}
                 className="group flex w-full flex-col justify-between rounded-lg border border-white/20 bg-background/50 p-4 backdrop-blur transition-colors hover:border-primary/70 hover:bg-background/80"
               >
-                <span className="flex items-start justify-between gap-3">
+                {/* Donde la tarjeta es estrecha (< 360 px y 1024–1535 px, 5 columnas) el enlace va
+                    en su propia línea: junto al título se salía de la tarjeta y tapaba la siguiente. */}
+                <span className="flex items-start justify-between gap-3 max-[359px]:flex-col max-[359px]:gap-2 lg:max-2xl:flex-col lg:max-2xl:gap-2">
                   <span className="font-display text-xl font-semibold uppercase leading-none tracking-[0.01em] text-white">
                     {service.title}
                   </span>

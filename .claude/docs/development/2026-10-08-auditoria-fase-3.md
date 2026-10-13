@@ -1,6 +1,6 @@
 # Auditoría de cierre de la Fase 3 (catálogo de soluciones)
 
-> **Versión**: 1.0 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -36,6 +36,17 @@ Verificar el catálogo `/soluciones` (ADR-014) y su impacto en el resto del siti
 | Responsive | Sin scroll horizontal en 360/390/768/1024/1280/1440 px; **desborde del header a 320–360 px** (ver A2) |
 | Lighthouse `/soluciones` | Móvil: rendimiento 79, accesibilidad 100, buenas prácticas 100, SEO 100 (LCP 4,5 s, CLS 0,003). Escritorio: 93 / 100 / 100 / 100 (LCP 0,9 s, **CLS 0,138**) |
 | Lighthouse ficha `erp-inventarios` | Móvil 91 / 100 / 100 / 100 (LCP 3,3 s). Escritorio 98 / 100 / 100 / 100 |
+
+## Estado de los hallazgos (2026-10-10)
+
+| Hallazgo | Estado |
+|---|---|
+| A1 `/api/contact` confirmaba sin entregar | **Corregido**: éxito solo con respuesta 2xx del canal; sin canal → 503, fallo o tiempo agotado (10 s) → 502, con salida a WhatsApp/correo |
+| A2 header desbordado a 320–360 px | **Corregido**: nombre en dos líneas por debajo de 375 px; 0 px de desborde de 320 a 1600 px |
+| M3 micrófono inoperante | **Corregido**: dictado por voz retirado de `HeroPrompt` |
+| M4 solo isotipo entre 1024 y 1279 px | **Corregido**: nombre visible en dos líneas en ese rango; espaciado del menú ajustado solo ahí |
+| B3 mención de SLA en fichas | Sin cambios (texto sin cifras ya publicado); pendiente de confirmación del negocio |
+| Resto (M1, M2, B1, B2, B4–B6) | Sin cambios |
 
 ## Hallazgos
 

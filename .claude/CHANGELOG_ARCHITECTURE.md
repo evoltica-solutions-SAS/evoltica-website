@@ -1,6 +1,6 @@
 # Changelog de arquitectura
 
-> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.3 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -21,6 +21,51 @@ No cubre: el detalle de cada decisión (contexto, alternativas, consecuencias) �
 ---
 
 ## Historial
+
+### 2026-10-10 — Fase 4 como prototipo y primera capa de servicios de aplicación
+**Tipo**: Hito estructural (implementa ADR-014 dentro de los principios de ADR-015; sin ADR nuevo)
+**ADR**: [ADR-014](docs/decisions/ADR-014-Commercial-Platform.md) — `Accepted`; [ADR-015](docs/decisions/ADR-015-Persistence-Identity.md) — `Proposed` (sin cambios)
+**Resumen**: `/diagnostico`, `/consultoria` y `/cotizar` funcionan solo en `next dev` (en producción, aviso y canales directos) a través de `lib/server/services/commercial-requests.ts`, sin persistencia. `/api/contact` responde éxito solo con entrega confirmada. Retirado el plazo "4 horas hábiles" no aprobado. Detalle: [diseño de la Fase 4 § 10](docs/architecture/2026-10-08-diseno-fase-4-y-requisitos-fase-5.md).
+
+### 2026-10-08 — Plataforma comercial propia y catálogo de soluciones
+**Tipo**: Decisión de producto + arquitectura
+**ADR**: [ADR-014-Commercial-Platform](docs/decisions/ADR-014-Commercial-Platform.md) — `Accepted`; [ADR-015-Persistence-Identity](docs/decisions/ADR-015-Persistence-Identity.md) — `Proposed` (principios aprobados, proveedores pendientes); [ADR-013](docs/decisions/ADR-013-Backend-Auth-Strategy.md) → `Superseded`
+**Resumen**: Plataforma B2B independiente de Odoo (integración opcional). Embudo con entrada por catálogo, cotización o diagnóstico; política de precios aprobados. Fase 3: `/soluciones` y 31 fichas `/soluciones/[slug]` construidas sobre las ofertas existentes, sin precios.
+
+### 2026-10-08 — Portal de clientes (Fase 2 de ADR-012)
+**Tipo**: Hito de implementación (sin decisión nueva)
+**ADR**: [ADR-012](docs/decisions/ADR-012-Public-Portal-Admin-Split.md) — `Accepted`; [ADR-013](docs/decisions/ADR-013-Backend-Auth-Strategy.md) sigue `Proposed`
+**Resumen**: `/app` con dashboard, servicios, productos, suscripciones, cloud, facturación, pagos, tickets, notificaciones y perfil; pantallas de acceso deshabilitadas; `middleware.ts`; adaptador de demostración solo en `next dev`. Nada accesible en producción hasta ADR-013. Estado detallado en [docs/architecture/2026-10-08-portal-integraciones-pendientes.md](docs/architecture/2026-10-08-portal-integraciones-pendientes.md).
+
+### 2026-10-08 — Separación público / portal / admin y contratos de backend
+**Tipo**: Arquitectura de aplicación
+**ADR**: [ADR-012-Public-Portal-Admin-Split](docs/decisions/ADR-012-Public-Portal-Admin-Split.md) — `Accepted`; [ADR-013-Backend-Auth-Strategy](docs/decisions/ADR-013-Backend-Auth-Strategy.md) — `Proposed`
+**Resumen**: Root layout mínimo y grupos de rutas `(public)`, `(auth)`, `(portal)`, `(admin)` sin cambiar URLs; dominio en `lib/domain`, contratos en `lib/server`; home reducida a introducción. El backend real (datos e identidad) queda pendiente de la decisión del negocio en ADR-013.
+
+### 2026-10-08 — Intro de marca con el isotipo real y cooldown de 6 h
+**Tipo**: Decisión de experiencia / arquitectura de UI
+**ADR**: [ADR-011-Brand-Intro-Cooldown](docs/decisions/ADR-011-Brand-Intro-Cooldown.md) — `Accepted` (reemplaza en parte ADR-009 y ADR-010)
+**Resumen**: La intro construye el isotipo real y abre la página por su hexágono central; se controla con un timestamp en `localStorage` (6 h, `lib/intro.ts`) en vez de `sessionStorage`. Se retiran `IntroLoader` y `ScrollExperience`. Reinicio solo en desarrollo (`?intro=1`, `resetIntro()`).
+
+### 2026-10-08 — Tema claro/oscuro, tipografía condensada y experiencia de scroll
+**Tipo**: Convención de marca + arquitectura de UI
+**ADR**: [ADR-010-Reference-Alignment-Theme-Type](docs/decisions/ADR-010-Reference-Alignment-Theme-Type.md) — `Accepted` (modifica en parte ADR-005)
+**Resumen**: Tokens semánticos con variables CSS habilitan el tema claro sin duplicar estilos; Barlow Condensed para titulares; intro de scroll y hero enmarcado con campo "cuéntanos qué quieres mejorar" en la home. Selector de idioma pospuesto (Fase 17).
+
+### 2026-10-08 — Intro de marca, transiciones entre páginas y coreografía por capítulos
+**Tipo**: Decisión de experiencia / arquitectura de UI
+**ADR**: [ADR-009-Motion-Navigation-Experience](docs/decisions/ADR-009-Motion-Navigation-Experience.md) — `Accepted`
+**Resumen**: Intro CSS solo en la primera entrada de la sesión, token `--intro-delay`, transición de cortina entre páginas sin dependencias, home por capítulos con cierre en verde de marca; el formulario de contacto pasa a vivir solo en `/contacto`.
+
+### 2026-10-08 — Lenguaje visual editorial y gráfico de marca "La trama"
+**Tipo**: Convención de marca
+**ADR**: [ADR-008-Visual-Language-Trama](docs/decisions/ADR-008-Visual-Language-Trama.md) — `Accepted`
+**Resumen**: Se reemplaza la estética "AI SaaS" (nodos, glow, tarjetas flotantes, titulares de dos tonos repetidos) por una composición editorial con un gráfico derivado del ápice del isotipo, una banda clara de contraste y copy concreto. Paleta, logo y tipografías se conservan.
+
+### 2026-10-08 — Sitio corporativo multipágina con contenido centralizado
+**Tipo**: Decisión de arquitectura de producto
+**ADR**: [ADR-007-Multi-Page-Site](docs/decisions/ADR-007-Multi-Page-Site.md) — `Accepted`
+**Resumen**: La landing de una página se reemplaza por un sitio multipágina (`/servicios/[slug]`, `/nosotros`, `/casos-de-exito`, `/contacto`) con contenido en `lib/`, sitemap generado (`app/sitemap.ts`) y fuentes vía `next/font`. Paleta, logo y tipografías de ADR-005 se conservan.
 
 ### 2026-07-07 — Adopción del sistema operativo de agentes de IA (workflows + agents)
 **Tipo**: Decisión de proceso permanente
@@ -66,8 +111,17 @@ No cubre: el detalle de cada decisión (contexto, alternativas, consecuencias) �
 | [ADR-002](docs/decisions/ADR-002-Why-Vercel.md) | Vercel | `Accepted` |
 | [ADR-003](docs/decisions/ADR-003-Why-Tailwind.md) | Tailwind CSS | `Accepted` |
 | [ADR-004](docs/decisions/ADR-004-Why-Odoo.md) | Odoo como ERP principal | `Accepted` |
-| [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md) | Identidad visual de marca | `Accepted` |
+| [ADR-005](docs/decisions/ADR-005-Brand-Guidelines.md) | Identidad visual de marca | `Accepted` (modificado en parte por ADR-010) |
 | [ADR-006](docs/decisions/ADR-006-AI-Operating-System.md) | Sistema operativo de agentes de IA (workflows + agents) | `Accepted` |
+| [ADR-007](docs/decisions/ADR-007-Multi-Page-Site.md) | Sitio corporativo multipágina con contenido en `lib/` | `Accepted` |
+| [ADR-008](docs/decisions/ADR-008-Visual-Language-Trama.md) | Lenguaje visual editorial y gráfico "La trama" | `Accepted` |
+| [ADR-009](docs/decisions/ADR-009-Motion-Navigation-Experience.md) | Intro, transiciones entre páginas y coreografía por capítulos | `Accepted` (intro reemplazada por ADR-011) |
+| [ADR-010](docs/decisions/ADR-010-Reference-Alignment-Theme-Type.md) | Tema claro/oscuro, tipografía condensada, experiencia de scroll | `Accepted` (experiencia de scroll reemplazada por ADR-011) |
+| [ADR-011](docs/decisions/ADR-011-Brand-Intro-Cooldown.md) | Intro de marca con isotipo real y cooldown de 6 h | `Accepted` |
+| [ADR-012](docs/decisions/ADR-012-Public-Portal-Admin-Split.md) | Separación público / portal / admin y contratos | `Accepted` |
+| [ADR-013](docs/decisions/ADR-013-Backend-Auth-Strategy.md) | Backend, sistema de registro y autenticación | `Superseded` por ADR-014/015 |
+| [ADR-014](docs/decisions/ADR-014-Commercial-Platform.md) | Plataforma comercial propia, Odoo opcional | `Accepted` |
+| [ADR-015](docs/decisions/ADR-015-Persistence-Identity.md) | Persistencia e identidad (principios) | `Proposed` |
 
 ## Referencias cruzadas
 

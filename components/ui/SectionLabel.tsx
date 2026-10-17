@@ -2,13 +2,15 @@ import { cn } from "@/lib/utils";
 
 interface SectionLabelProps {
   children: React.ReactNode;
+  /** Número de sección editorial ("02"). Opcional. */
+  index?: string;
   className?: string;
 }
 
-export function SectionLabel({ children, className }: SectionLabelProps) {
+export function SectionLabel({ children, index, className }: SectionLabelProps) {
   return (
-    <span className={cn("section-label", className)}>
-      <span className="w-1.5 h-1.5 rounded-full bg-primary-400 inline-block" />
+    <span className={cn("eyebrow", className)}>
+      {index && <span className="eyebrow-index">{index}</span>}
       {children}
     </span>
   );

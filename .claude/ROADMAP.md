@@ -1,6 +1,6 @@
 # Roadmap (24 meses)
 
-> **Versión**: 1.0 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.4 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -21,12 +21,14 @@ No cubre: el detalle de implementación de cada fase (eso se documenta cuando la
 
 ---
 
+> **Nota (2026-10-08):** la dirección de producto cambió a una plataforma comercial propia ([ADR-014](docs/decisions/ADR-014-Commercial-Platform.md)). El plan de fases vigente para catálogo, solicitudes, cotizaciones, portal, admin y pagos está en [docs/architecture/2026-10-08-plataforma-comercial-b2b.md § 11](docs/architecture/2026-10-08-plataforma-comercial-b2b.md); este roadmap conserva los horizontes de consolidación (seguridad, analytics, testing, SEO).
+
 ## Horizonte 0 — Fundación (estado actual)
 
 ### Fase 0 — Landing
 **Estado: completada, en producción.**
 - **Objetivo**: comunicar la propuesta de valor de Evoltica y capturar leads calificados.
-- **Funcionalidades**: Hero, About, Benefits, Services (resumen), OurApproach, Process, Technologies, Trust, FAQ, Contact, WhatsApp flotante.
+- **Funcionalidades**: landing original de una página. Reconstruida el 2026-10-08 como sitio multipágina ([ADR-007](docs/decisions/ADR-007-Multi-Page-Site.md)): home con hero, servicios, diferenciadores, proceso, capacidades, compromisos, FAQ y contacto; `/nosotros`; `/contacto`; 404; WhatsApp flotante.
 - **Prioridad**: Crítica.
 - **Dependencias**: ninguna (es la base del sitio).
 - **Criterios de terminado**: ✅ desplegada, ✅ formulario de contacto funcional, ✅ responsive, ✅ SEO básico implementado.
@@ -34,7 +36,7 @@ No cubre: el detalle de implementación de cada fase (eso se documenta cuando la
 ### Fase 1 — Servicios
 **Estado: completada, en producción.**
 - **Objetivo**: dar detalle profundo de las 5 líneas de servicio para capturar búsquedas específicas y educar al lead antes del contacto.
-- **Funcionalidades**: página `/servicios` con el detalle completo de cada `ServiceData` (`lib/services-data.ts`).
+- **Funcionalidades**: página `/servicios` (portafolio + metodología) y una página por servicio en `/servicios/[slug]` con el detalle completo de cada `ServiceData` (`lib/services-data.ts`).
 - **Prioridad**: Crítica.
 - **Dependencias**: Fase 0.
 - **Criterios de terminado**: ✅ una sección por servicio, ✅ coherente con el orden del embudo comercial ([BUSINESS_CONTEXT.md](BUSINESS_CONTEXT.md)), ✅ enlazada desde la navegación principal.
@@ -93,6 +95,7 @@ Antes de agregar superficie nueva, se consolida la base: seguridad, rendimiento,
 
 ### Fase 8 — Casos de éxito
 - **Objetivo**: aportar prueba social concreta al embudo comercial (hoy el sitio no muestra clientes reales ni resultados).
+- **Estado (2026-10-08)**: estructura lista — ruta `/casos-de-exito`, tipo `CaseStudy` y componentes (`lib/cases-data.ts`). Falta el contenido real autorizado; mientras tanto la página es `noindex` y la home oculta la sección.
 - **Funcionalidades**: sección/página de casos de éxito por línea de servicio, con métricas de impacto cuando el cliente lo autorice.
 - **Prioridad**: Alta.
 - **Dependencias**: autorización de clientes reales para publicar su caso (dependencia de negocio, no técnica); Fase 6 (Analytics) para medir su efecto en conversión.
@@ -110,6 +113,7 @@ Antes de agregar superficie nueva, se consolida la base: seguridad, rendimiento,
 ## Horizonte 3 — Año 2, primer semestre — Productos digitales para clientes
 
 ### Fase 10 — Portal Clientes
+- **Estado (2026-10-08)**: adelantada por decisión del negocio. Estructura, dominio y contratos en construcción ([ADR-012](docs/decisions/ADR-012-Public-Portal-Admin-Split.md)); backend e identidad pendientes de [ADR-013](docs/decisions/ADR-013-Backend-Auth-Strategy.md).
 - **Objetivo**: dar a los clientes de Servicios Administrados un canal propio para ver el estado de su cuenta/soporte, reforzando la recurrencia (ver [BUSINESS_CONTEXT.md § Modelo de negocio](BUSINESS_CONTEXT.md#modelo-de-negocio-de-proyecto-a-recurrencia)).
 - **Funcionalidades**: login de cliente, vista de tickets de mesa de ayuda, estado de servicios contratados.
 - **Prioridad**: Alta (impacto directo en retención).
@@ -121,7 +125,7 @@ Antes de agregar superficie nueva, se consolida la base: seguridad, rendimiento,
 - **Funcionalidades**: automatización del flujo lead → CRM interno → asignación, usando las mismas herramientas que Evoltica ofrece a clientes (n8n/Make, ver [BUSINESS_CONTEXT.md](BUSINESS_CONTEXT.md)) como caso de uso propio ("dogfooding").
 - **Prioridad**: Media.
 - **Dependencias**: Fase 12 (Integraciones) para tener un CRM/destino al cual automatizar el envío.
-- **Criterios de terminado**: un lead nuevo llega al sistema interno correspondiente sin intervención manual; tiempo de primera respuesta medido y dentro del compromiso de "4h hábiles".
+- **Criterios de terminado**: un lead nuevo llega al sistema interno correspondiente sin intervención manual; tiempo de primera respuesta medido (el compromiso de tiempo lo define el negocio; hoy no hay ninguno aprobado).
 
 ### Fase 12 — Integraciones
 - **Objetivo**: conectar el sitio con las herramientas reales de operación comercial de Evoltica.
@@ -142,6 +146,7 @@ Antes de agregar superficie nueva, se consolida la base: seguridad, rendimiento,
 - **Criterios de terminado**: empleados pueden autenticarse y acceder a al menos un recurso interno real.
 
 ### Fase 14 — Dashboard Administrativo
+- **Estado (2026-10-08)**: adelantada junto con la Fase 10 como `/admin` (ADR-012).
 - **Objetivo**: dar visibilidad interna a Evoltica sobre leads, estado comercial y métricas del sitio en un solo lugar.
 - **Funcionalidades**: panel con leads capturados (integrado con Fase 12), métricas de Fase 6 (Analytics), estado de casos de éxito/contenido.
 - **Prioridad**: Media.

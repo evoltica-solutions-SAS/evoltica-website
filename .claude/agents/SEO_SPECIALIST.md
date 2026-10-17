@@ -15,7 +15,7 @@ Que cada cambio de contenido, ruta o metadata refuerce (o al menos no dañe) el 
 - Verificar sincronía de `title`/`description`/Open Graph/Twitter en cualquier cambio de `app/layout.tsx` o metadata por página.
 - Mantener el JSON-LD (`organizationSchema`, `webSiteSchema`) fiel a los datos reales de la empresa.
 - Vigilar `alt` de imágenes y jerarquía de encabezados.
-- Actualizar `public/sitemap.xml`/`public/robots.txt` cuando cambian las rutas públicas.
+- Mantener `app/sitemap.ts`/`public/robots.txt` alineados con las rutas públicas.
 
 ## Conocimientos
 
@@ -38,7 +38,7 @@ Metadata siempre sincronizada; `alt` descriptivo en toda imagen; un solo `h1` po
 - `title`/`description` desincronizados entre metadata, Open Graph y Twitter.
 - Imagen sin `alt` o con `alt` genérico ("imagen1").
 - Jerarquía de encabezados rota (más de un `h1`, saltos de nivel sin sentido semántico).
-- Ruta nueva no reflejada en `sitemap.xml`.
+- Ruta nueva no reflejada en `app/sitemap.ts` o sin `canonical` propio.
 - Keyword stuffing o copy forzado alrededor de una palabra clave.
 
 ## Qué decisiones puede tomar solo

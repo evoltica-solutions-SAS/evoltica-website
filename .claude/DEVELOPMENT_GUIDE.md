@@ -1,6 +1,6 @@
 # Guía de desarrollo
 
-> **Versión**: 1.0 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-10-08 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -15,11 +15,11 @@ No cubre: estilos visuales (ver [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)), estructur
 ## Convenciones de código
 
 - Usa **funciones nombradas con `export function NombreComponente()`** para componentes, no `export default function`, salvo en archivos de rutas de Next (`page.tsx`, `layout.tsx`, `route.ts`) donde Next lo exige.
-- Nombres de archivo de componentes en **PascalCase** (`Hero.tsx`, `WhatsAppButton.tsx`); hooks en **camelCase** con prefijo `use` (`useCounter.ts`).
+- Nombres de archivo de componentes en **PascalCase** (`Hero.tsx`, `WhatsAppButton.tsx`); hooks en **camelCase** con prefijo `use` (`useScrollAnimation.ts`).
 - Importa siempre con el alias `@/*` (configurado en `tsconfig.json`), nunca rutas relativas largas (`../../../`).
 - Mantén los datos de contenido en español (es el idioma del sitio); los identificadores de código (variables, funciones, props) en inglés, como ya es el patrón existente.
 - Prioriza componentes de servidor por defecto. Añade `"use client"` solo cuando el componente use hooks de estado/efecto, event handlers del DOM, o librerías que lo requieran (Framer Motion, React Hook Form, hooks de `hooks/`).
-- Evita lógica de negocio dentro de JSX profundamente anidado; extrae funciones auxiliares (como `handleNavClick` en `Hero.tsx`) al inicio del componente.
+- Evita lógica de negocio dentro de JSX profundamente anidado; extrae funciones auxiliares (como `isActivePath` en `Navbar.tsx`) al inicio del archivo o del componente.
 
 **Ejemplo — componente correcto:**
 ```tsx
@@ -38,7 +38,7 @@ export function KpiCard({ value, label }: KpiCardProps) {
 ## Reglas para componentes
 
 - Un componente de sección = una responsabilidad visual = un archivo. No dividas una sección en múltiples archivos salvo que se reutilice en otra página.
-- Sub-componentes puramente visuales usados solo dentro de una sección (p. ej. `KpiCard` en `Hero.tsx`) pueden vivir en el mismo archivo; solo promuévelos a `components/ui/` si se reutilizan en más de una sección.
+- Sub-componentes puramente visuales usados solo dentro de una sección (p. ej. `Field` en `ContactForm.tsx`) pueden vivir en el mismo archivo; solo promuévelos a `components/ui/` si se reutilizan en más de una sección.
 - Tipa las props explícitamente con una interfaz o tipo inline; no uses `any` ni props sin tipar.
 - Los componentes interactivos (botones, formularios, cualquier cosa con `onClick`/`onChange`) deben ser accesibles: elementos semánticos (`<button>`, no `<div onClick>`), estados de foco visibles, labels asociados a inputs. Detalle completo en [UX_GUIDE.md § Accesibilidad](UX_GUIDE.md#accesibilidad).
 - Las animaciones de Framer Motion siguen los arquetipos definidos en [DESIGN_SYSTEM.md § Motion](DESIGN_SYSTEM.md#motion-framer-motion); no introduzcas curvas de easing nuevas sin razón.
@@ -62,9 +62,10 @@ function isValidPayload(data: unknown): data is ContactPayload {
 ## Buenas prácticas
 
 - Antes de tocar una sección, léela completa: el patrón de animaciones, textos y estructura de cada sección es consistente entre sí; no introduzcas un estilo distinto en una sola sección.
-- No dupliques datos de contacto, número de WhatsApp o textos legales: reutiliza las constantes de `lib/utils.ts` (`WHATSAPP_NUMBER`, `WHATSAPP_MESSAGE`, `getWhatsAppUrl`) en vez de hardcodear el número en otro componente.
+- No dupliques datos de contacto, número de WhatsApp o textos legales: reutiliza `SITE` (`lib/site-config.ts`) y `getWhatsAppUrl` (`lib/utils.ts`) en vez de hardcodearlos en otro componente.
+- Mantén las secciones como Server Components: envuelve solo la parte animada con `Reveal`/`RevealGroup` en vez de marcar toda la sección con `"use client"`.
 - Verifica siempre que el sitio compile y lintee antes de dar por terminado un cambio: `npm run lint` y `npm run build`.
-- Prueba el formulario de contacto y la navegación por anclas manualmente (`npm run dev`) cuando el cambio los afecte; son los dos flujos de conversión del sitio (ver [UX_GUIDE.md](UX_GUIDE.md)).
+- Prueba el formulario de contacto y la navegación (menú de servicios, menú móvil) manualmente (`npm run dev`) cuando el cambio los afecte; son los dos flujos de conversión del sitio (ver [UX_GUIDE.md](UX_GUIDE.md)).
 - Mantén el contenido y las validaciones del formulario (`app/api/contact/route.ts`) sincronizados con lo que exige el formulario del cliente (React Hook Form) para no tener reglas divergentes entre frontend y backend (ver también [SECURITY_GUIDE.md](SECURITY_GUIDE.md)).
 
 ## Criterios de revisión de código

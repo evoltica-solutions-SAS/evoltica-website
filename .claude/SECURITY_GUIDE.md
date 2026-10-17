@@ -1,6 +1,6 @@
 # Estándares de seguridad
 
-> **Versión**: 1.0 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.2 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 ## Propósito
 
@@ -14,7 +14,33 @@ No cubre: SEO/indexación (ver [SEO_GUIDE.md](SEO_GUIDE.md)) ni rendimiento (ver
 
 ## Superficie de riesgo
 
-**Única superficie de entrada de datos externos**: `app/api/contact/route.ts`. Trátalo como el punto de mayor riesgo del proyecto — es también el único lugar del sitio donde entran datos que Evoltica no controla.
+Desde ADR-012 la superficie incluye las áreas privadas (ver § Áreas privadas); hoy no exponen datos reales.
+
+**Única superficie de entrada de datos externos que entrega datos a Evoltica**: `app/api/contact/route.ts`. Trátalo como el punto de mayor riesgo del proyecto.
+
+**Superficie adicional (Fase 4, 2026-10-10)**: la server action `submitCommercialRequestAction` (`app/(public)/actions.ts`) de `/diagnostico`, `/consultoria` y `/cotizar`. En producción responde "no disponible" **sin procesar los datos**; en `next dev` valida (mismas reglas en cliente y servidor, `lib/commercial/validation.ts`), aplica `sanitize`, un honeypot y listas cerradas, y no guarda ni envía nada. Antes de que guarde datos reales necesita persistencia, consentimiento registrado y límite de envíos (ver [diseño de la Fase 4 § 8](docs/architecture/2026-10-08-diseno-fase-4-y-requisitos-fase-5.md)).
+
+### Entrega del formulario de contacto (corrección A1, 2026-10-10)
+
+El endpoint responde éxito **solo** si el canal configurado (`EMAIL_WEBHOOK_URL`) acepta la solicitud con HTTP 2xx. Ese éxito significa "el canal la aceptó", no que una persona la leyó.
+
+| Escenario | Respuesta | Log del servidor (sin datos personales) |
+|---|---|---|
+| Canal acepta (2xx) | 200 · "Tu solicitud se envió a nuestro canal de atención." (no afirma que un correo llegó ni que alguien la leyó) | — |
+| Sin `EMAIL_WEBHOOK_URL` | 503 · `CHANNEL_UNAVAILABLE` | "EMAIL_WEBHOOK_URL no está configurada" (en `next dev` también el payload, como antes) |
+| Canal responde ≠ 2xx | 502 · `DELIVERY_FAILED` | Solo el código HTTP |
+| Red caída o sin respuesta en 10 s | 502 · `DELIVERY_FAILED` | Solo el tipo de error (p. ej. `TimeoutError`) |
+| Datos inválidos | 400 · lista de errores | — |
+
+En 502/503 el mensaje dice que la solicitud **no se envió ni quedó registrada** y ofrece WhatsApp y correo; el formulario muestra además un enlace a WhatsApp. Ninguna respuesta incluye un plazo de contacto.
+
+**Verificación en Vercel: pendiente.** Desde este repositorio no hay acceso al proyecto de Vercel (sin CLI, sin `.vercel/`, sin credenciales), así que no está verificado si `EMAIL_WEBHOOK_URL` existe en producción. Si no existe, el formulario de producción responderá 503 tras el próximo despliegue (antes respondía un éxito falso). Lo comprueba alguien con acceso al dashboard, sin copiar el valor.
+
+### Tratamiento de datos personales: requisitos legales pendientes (2026-10-10)
+
+No hay una política de tratamiento aprobada ni publicada. Por eso el sitio **no afirma ninguna protección legal** (se retiró "Tu información está protegida bajo la Ley 1581"); el formulario de contacto solo dice "Usamos estos datos para responder tu consulta", que **no sustituye** la autorización ni las demás obligaciones legales.
+
+Antes de **almacenar** solicitudes reales (Fase 5), Evoltica debe revisar y aprobar, con asesoría legal: la política de tratamiento y su publicación; la base jurídica de cada tratamiento; la autorización del titular cuando corresponda y cómo se registra; los plazos de conservación y supresión; y el canal para ejercer los derechos de los titulares (consulta, actualización, rectificación, supresión, revocatoria). Este repositorio no redacta ese contenido. Requisitos técnicos asociados: [diseño de la Fase 4 § 8.4](docs/architecture/2026-10-08-diseno-fase-4-y-requisitos-fase-5.md).
 
 ## Reglas
 
@@ -27,6 +53,16 @@ No cubre: SEO/indexación (ver [SEO_GUIDE.md](SEO_GUIDE.md)) ni rendimiento (ver
 - **Rate limiting / abuso**: el endpoint de contacto no tiene actualmente límite de tasa. Si el volumen de spam se vuelve un problema, la solución se discute antes de implementarse (p. ej. rate limiting en el borde con Vercel, CAPTCHA, o validación adicional), no se improvisa sobre la marcha.
 - **Dependencias**: antes de agregar una dependencia nueva, revisa que sea mantenida activamente y evalúa su necesidad real (ver [PERFORMANCE_GUIDE.md](PERFORMANCE_GUIDE.md)); no agregues paquetes para resolver algo trivial que se puede escribir en unas líneas.
 - **Cabeceras y transporte**: el sitio se sirve sobre HTTPS vía Vercel; no se debe introducir contenido mixto (`http://`) en assets, links o llamadas `fetch`.
+
+## Áreas privadas (`/app`, `/admin`) — ADR-012
+
+- **Autorización siempre en el servidor**: cada layout, página y server action del área privada llama a `getPortalContext()` / `requireRole()`. `middleware.ts` solo redirige de forma optimista; nunca es la única barrera.
+- **Aislamiento por organización**: los repositorios reciben la sesión y filtran por `organizationId`; un registro ajeno se trata como inexistente (`notFound()`), sin revelar que existe.
+- **Sin acceso real hasta ADR-013**: no hay proveedor de identidad; no se aceptan credenciales. El entorno de demostración solo existe con `next dev` (`PORTAL_DEMO_ENABLED`) y no se puede activar por variable de entorno.
+- **Código de servidor aislado**: `lib/server/**` importa `server-only`; los datos ficticios y los contratos nunca llegan al bundle del navegador.
+- **Datos financieros**: el portal no genera facturas ni marca pagos; el estado de un pago solo lo cambia un webhook verificado.
+- **Adjuntos**: no viajan por server actions (límite 1 MB); se validan tipo, tamaño y cantidad en cliente y servidor (`ATTACHMENT_LIMITS`).
+- Detalle de lo pendiente: [docs/architecture/2026-10-08-portal-integraciones-pendientes.md](docs/architecture/2026-10-08-portal-integraciones-pendientes.md).
 
 ## Checklist de seguridad para cambios en `app/api/contact/route.ts`
 

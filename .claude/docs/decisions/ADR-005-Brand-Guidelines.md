@@ -1,7 +1,7 @@
 # ADR-005: Identidad visual y guías de marca
 
 **Fecha**: 2026-07-07 (documentado retroactivamente; la decisión ya estaba implementada — ver nota en [docs/decisions/README.md](README.md))
-**Estado**: Accepted
+**Estado**: Accepted — modificado en parte por [ADR-010](ADR-010-Reference-Alignment-Theme-Type.md) (tema claro y tipografía condensada; paleta y logo siguen vigentes)
 **Versión**: 1.0
 **Responsable**: Evoltica Solutions SAS
 

@@ -63,15 +63,15 @@ Normalmente ninguna regla de dominio cambia (el refactor no cambia el "qué", so
 
 ## Ejemplo real
 
-**Situación hipotética**: la lógica de scroll suave hacia una sección aparece duplicada de forma manual en dos componentes que no usan el hook `useSectionNav` ya existente.
+**Situación hipotética**: dos secciones declaran a mano un `motion.div` con `initial`/`whileInView` equivalente, en vez de usar el componente `Reveal` ya existente.
 
 1. Confirmar: el comportamiento (scroll suave con el mismo offset) no cambia — solo se unifica la implementación.
 2. `ARCHITECT` mide el alcance: dos archivos, ningún cruce de límite arquitectónico (el hook ya vive en `hooks/`, que es su lugar correcto).
 3. Verificación disponible: no hay tests automatizados de navegación aún — el plan es probar manualmente cada ancla afectada en móvil y escritorio antes y después.
-4. Refactor en un paso: reemplazar la lógica manual duplicada por una llamada a `useSectionNav` en ambos componentes.
+4. Refactor en un paso: reemplazar la animación duplicada por `Reveal` en ambos componentes.
 5. Lint y build tras el cambio.
 6. Probar cada ancla: el comportamiento de scroll es idéntico al anterior.
-7. Commit: `refactor(navigation): unificar scroll a sección usando useSectionNav`.
+7. Commit: `refactor(motion): unificar entradas de sección usando Reveal`.
 
 ## Referencias cruzadas
 

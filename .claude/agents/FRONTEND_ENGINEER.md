@@ -48,7 +48,7 @@ Estructura interna de un componente (subcomponentes, props, organización del ar
 
 ## Qué decisiones debe escalar
 
-Introducir un color/token nuevo, una familia tipográfica nueva, una librería de UI adicional (Radix, MUI, etc.), o cualquier variante de modo claro — todo esto altera el sistema de diseño cerrado y requiere autorización.
+Introducir un color/token nuevo, una familia tipográfica nueva, una librería de UI adicional (Radix, MUI, etc.), o estilos que no usen los tokens semánticos del tema (ver ADR-010) — todo esto altera el sistema de diseño cerrado y requiere autorización.
 
 ## Frontera con otros roles
 

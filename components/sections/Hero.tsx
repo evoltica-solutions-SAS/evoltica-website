@@ -1,214 +1,124 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ChevronRight, ArrowDown, Sparkles } from "lucide-react";
-import { useCounter } from "@/hooks/useCounter";
+import { useRef } from "react";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Trama } from "@/components/ui/Trama";
+import { HeroPrompt } from "@/components/ui/HeroPrompt";
+import { SERVICES } from "@/lib/services-data";
+import { BRAND_MEDIA } from "@/lib/media";
 
-const kpis = [
-  { value: 5, prefix: "", suffix: "", label: "Servicios", sublabel: "líneas integrales" },
-  { value: 24, prefix: "", suffix: "/7", label: "Soporte", sublabel: "monitoreo continuo" },
-  { value: 100, prefix: "", suffix: "%", label: "Gratuita", sublabel: "consultoría inicial" },
-  { value: 4, prefix: "", suffix: "h", label: "Respuesta", sublabel: "tiempo máximo hábil" },
-];
+/** Retraso relativo a la apertura de la intro (0 s si la intro no corre en esta visita). */
+const at = (seconds: number): React.CSSProperties => ({
+  animationDelay: `calc(var(--intro-delay) + ${seconds}s)`,
+});
 
-function KpiCard({
-  value,
-  prefix,
-  suffix,
-  label,
-  sublabel,
-  delay,
-}: {
-  value: number;
-  prefix: string;
-  suffix: string;
-  label: string;
-  sublabel: string;
-  delay: number;
-}) {
-  const { ref, count } = useCounter(value, 2200);
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="flex flex-col items-center p-4 rounded-2xl glass border border-white/[0.08] hover:border-primary/30 transition-all group"
-    >
-      <span className="text-2xl lg:text-3xl font-black text-white tracking-tight group-hover:text-primary-300 transition-colors">
-        {prefix}
-        {suffix === "/7" ? (suffix === "/7" && count >= value ? "24" : count) : count}
-        {suffix}
-      </span>
-      <span className="text-sm font-semibold text-white mt-1">{label}</span>
-      <span className="text-xs text-slate-500 mt-0.5">{sublabel}</span>
-    </motion.div>
-  );
-}
-
+/**
+ * Hero enmarcado: titular condensado, campo "cuéntanos qué quieres mejorar"
+ * y las cinco líneas de servicio en tarjetas. Entrada en CSS encadenada a la
+ * intro de marca (--intro-delay): eyebrow → titular → subtítulo → campo → texto
+ * de ayuda → tarjetas → trama. Visible sin esperar a JavaScript.
+ */
 export function Hero() {
-  const handleNavClick = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      const offset = 80;
-      const top =
-        element.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: "smooth" });
-    }
+  const trackRef = useRef<HTMLUListElement>(null);
+  const scrollCards = (direction: 1 | -1) => {
+    const track = trackRef.current;
+    const card = track?.firstElementChild as HTMLElement | null;
+    if (track && card) track.scrollBy({ left: direction * (card.offsetWidth + 12), behavior: "smooth" });
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background layers */}
-      <div className="absolute inset-0 bg-gradient-hero" />
-      <div className="absolute inset-0 grid-bg opacity-50" />
-
-      {/* Orbs */}
-      <div className="absolute top-1/4 -left-40 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse-slow" />
-      <div className="absolute bottom-1/4 -right-40 w-80 h-80 bg-accent/15 rounded-full blur-3xl animate-pulse-slow animation-delay-300" />
-      <div className="absolute top-3/4 left-1/3 w-60 h-60 bg-secondary/10 rounded-full blur-3xl animate-pulse-slow animation-delay-200" />
-
-      {/* Floating particles */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 rounded-full bg-primary/60"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: [0, 1, 0],
-            y: [-20, -80, -20],
-            x: [0, (i % 2 === 0 ? 1 : -1) * 20, 0],
-          }}
-          transition={{
-            duration: 4 + i,
-            repeat: Infinity,
-            delay: i * 0.8,
-            ease: "easeInOut",
-          }}
-          style={{
-            left: `${15 + i * 14}%`,
-            top: `${60 + (i % 3) * 10}%`,
-          }}
-        />
-      ))}
-
-      <div className="container-custom relative z-10 text-center py-16 lg:py-24">
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-primary/10 border border-primary/25 text-primary-300 text-sm font-medium"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          Transformamos procesos. Impulsamos crecimiento.
-          <ChevronRight className="w-3.5 h-3.5" />
-        </motion.div>
-
-        {/* Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight leading-[1.05] mb-6 max-w-4xl mx-auto"
-        >
-          <span className="text-white">Impulsamos la</span>
-          <br />
-          <span className="relative inline-block">
-            <span className="gradient-text-blue">evolución digital</span>
-            {/* Underline accent */}
-            <motion.span
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.8, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-accent origin-left"
-            />
-          </span>
-          <br />
-          <span className="text-white">de tu empresa</span>
-        </motion.h1>
-
-        {/* Subheadline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="text-lg lg:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed"
-        >
-          Consultoría empresarial,{" "}
-          <span className="text-slate-200 font-medium">
-            ERP y automatización, infraestructura, servicios administrados y
-            desarrollo
-          </span>{" "}
-          — el socio tecnológico que optimiza tu operación y se queda para
-          sostenerla.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
-        >
-          <button
-            onClick={() => handleNavClick("#contacto")}
-            className="btn-primary text-base px-7 py-3.5 group"
-          >
-            Solicitar Consultoría
-            <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
-          <button
-            onClick={() => handleNavClick("#servicios")}
-            className="btn-secondary text-base px-7 py-3.5 group"
-          >
-            Ver Servicios
-            <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
-          </button>
-        </motion.div>
-
-        {/* KPIs grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-2xl mx-auto"
-        >
-          {kpis.map((kpi, i) => (
-            <KpiCard key={kpi.label} {...kpi} delay={0.6 + i * 0.1} />
-          ))}
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="flex flex-col items-center gap-2 mt-16"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-1 text-slate-600 hover:text-slate-400 transition-colors cursor-pointer"
-            onClick={() => handleNavClick("#sobre-nosotros")}
-          >
-            <span className="text-xs font-medium tracking-widest uppercase">
-              Explorar
-            </span>
-            <div className="w-5 h-8 border border-slate-700 rounded-full flex items-start justify-center pt-1.5">
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="w-1 h-2 bg-primary rounded-full"
-              />
+    <section id="hero" className="relative p-2 sm:p-3" aria-labelledby="hero-title">
+      <div className="relative flex min-h-[calc(100svh-1rem)] flex-col overflow-hidden rounded-xl border border-white/15 bg-surface-alt sm:min-h-[calc(100svh-1.5rem)]">
+        {/* Fondo: trama de marca, centrada y tenue */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+          <div className="absolute -bottom-[38%] -right-[30%] w-[120vw] opacity-30 sm:-right-[18%] sm:w-[85vw] lg:-bottom-[45%] lg:-right-[8%] lg:w-[62vw]">
+            <div style={at(0.5)} className="animate-enter">
+              <Trama id="hero-trama" draw={false} hatch={false} photo={BRAND_MEDIA.hero} />
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_42%,rgb(var(--c-surface-alt))_25%,transparent_80%)]" />
+        </div>
+
+        <div className="relative flex flex-1 flex-col items-center justify-center px-5 pb-10 pt-28 text-center sm:px-10 lg:pt-32"
+        >
+          <p style={at(0.08)} className="animate-enter font-mono text-[11px] uppercase tracking-[0.18em] text-slate-400">
+            Consultoría · ERP · Infraestructura · Soporte — Colombia
+          </p>
+
+          <h1
+            id="hero-title"
+            tabIndex={-1}
+            style={at(0.14)}
+            className="mt-6 animate-lift font-display font-semibold uppercase leading-[0.88] tracking-[-0.01em] text-white outline-none [font-size:clamp(3rem,1.6rem+6vw,7.75rem)]"
+          >
+            Optimizamos <span className="font-light">tu operación</span>
+          </h1>
+
+          <p
+            style={at(0.22)}
+            className="mt-4 max-w-3xl animate-lift font-display text-xl font-medium uppercase leading-tight tracking-[0.01em] text-slate-200 sm:text-3xl"
+          >
+            Y nos quedamos para <span className="font-semibold text-primary">sostenerla</span>
+          </p>
+
+          <div style={at(0.3)} className="mt-10 w-full max-w-xl animate-enter">
+            <HeroPrompt />
+          </div>
+          <p style={at(0.37)} className="mt-3 animate-enter text-xs text-slate-400">
+            Lo lee una persona del equipo.
+          </p>
+        </div>
+
+        {/* Cinco líneas de servicio */}
+        <div style={at(0.44)} className="relative animate-enter px-3 pb-3 sm:px-4 sm:pb-4">
+          <ul
+            ref={trackRef}
+            className="scroller flex snap-x snap-mandatory gap-3 overflow-x-auto lg:grid lg:grid-cols-5 lg:overflow-visible"
+            aria-label="Servicios"
+          >
+            {SERVICES.map((service) => (
+              <li key={service.slug} className="flex w-[86%] shrink-0 snap-start sm:w-[46%] lg:w-auto">
+              <Link
+                href={`/servicios/${service.slug}`}
+                className="group flex w-full flex-col justify-between rounded-lg border border-white/20 bg-background/50 p-4 backdrop-blur transition-colors hover:border-primary/70 hover:bg-background/80"
+              >
+                {/* Donde la tarjeta es estrecha (< 360 px y 1024–1535 px, 5 columnas) el enlace va
+                    en su propia línea: junto al título se salía de la tarjeta y tapaba la siguiente. */}
+                <span className="flex items-start justify-between gap-3 max-[359px]:flex-col max-[359px]:gap-2 lg:max-2xl:flex-col lg:max-2xl:gap-2">
+                  <span className="font-display text-xl font-semibold uppercase leading-none tracking-[0.01em] text-white">
+                    {service.title}
+                  </span>
+                  <span className="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-slate-200 transition-colors group-hover:text-primary">
+                    Más información
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:rotate-45" aria-hidden="true" />
+                  </span>
+                </span>
+                <span className="mt-4 line-clamp-2 text-left text-[13px] leading-snug text-slate-300">{service.summary}</span>
+              </Link>
+              </li>
+            ))}
+          </ul>
+          {/* Navegación del carrusel en móvil */}
+          <div className="mt-3 flex justify-center gap-2 lg:hidden">
+            <button
+              type="button"
+              onClick={() => scrollCards(-1)}
+              aria-label="Servicio anterior"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 text-white"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollCards(1)}
+              aria-label="Servicio siguiente"
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-ink-950"
+            >
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );

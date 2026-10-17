@@ -2,15 +2,35 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./lib/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   darkMode: "class",
   theme: {
     extend: {
       colors: {
-        background: "#0B0F19",
+        // ── Tokens semánticos con tema (valores en app/globals.css, :root y html.light) ──
+        // `white` es el color de primer plano: blanco en oscuro, tinta en claro. Así todo
+        // `text-white`, `border-white/[0.1]`, `bg-white/[0.04]` se invierte solo con el tema.
+        white: "rgb(var(--c-fg) / <alpha-value>)",
+        background: "rgb(var(--c-bg) / <alpha-value>)",
+        surface: {
+          deep: "rgb(var(--c-surface-deep) / <alpha-value>)",
+          alt: "rgb(var(--c-surface-alt) / <alpha-value>)",
+          raised: "rgb(var(--c-surface-raised) / <alpha-value>)",
+        },
+        // Blanco fijo: texto sobre superficies que son oscuras en ambos temas (cortinas, botones de tinta).
+        snow: "#FFFFFF",
+        // Neutros de tinta FIJOS (no cambian con el tema): cortinas, texto sobre verde de marca.
+        ink: {
+          DEFAULT: "#0B0F19",
+          950: "#070A11",
+          900: "#080B12",
+          800: "#0D1220",
+          700: "#121829",
+          600: "#1A2133",
+        },
         // Verde principal — color dominante de marca, extraído del logo oficial
         primary: {
           DEFAULT: "#12D56F",
@@ -71,9 +91,12 @@ const config: Config = {
           900: "#000B16",
           950: "#00070D",
         },
+        // 200–500 se invierten con el tema (texto secundario); 600+ son fijos.
         slate: {
-          400: "#94A3B8",
-          500: "#64748B",
+          200: "rgb(var(--c-slate-200) / <alpha-value>)",
+          300: "rgb(var(--c-slate-300) / <alpha-value>)",
+          400: "rgb(var(--c-slate-400) / <alpha-value>)",
+          500: "rgb(var(--c-slate-500) / <alpha-value>)",
           600: "#475569",
           700: "#334155",
           800: "#1E293B",
@@ -82,55 +105,56 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "Fira Code", "monospace"],
+        sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
+        // Condensada para titulares (ADR-010).
+        display: ["var(--font-display)", "Barlow Condensed", "Arial Narrow", "sans-serif"],
+        mono: ["var(--font-mono)", "JetBrains Mono", "Fira Code", "monospace"],
+      },
+      fontSize: {
+        // Escala display fluida (clamp) — encabezados de hero y secciones.
+        "display-hero": ["clamp(3.1rem, 0.6rem + 9.2vw, 10.5rem)", { lineHeight: "0.88", letterSpacing: "-0.055em" }],
+        "display-xl": ["clamp(2.6rem, 1.2rem + 5.2vw, 5.75rem)", { lineHeight: "0.98", letterSpacing: "-0.045em" }],
+        "display-lg": ["clamp(2.2rem, 1.2rem + 3.6vw, 4.25rem)", { lineHeight: "1.02", letterSpacing: "-0.04em" }],
+        "display-md": ["clamp(1.85rem, 1.2rem + 2.2vw, 3.25rem)", { lineHeight: "1.06", letterSpacing: "-0.035em" }],
+        "display-sm": ["clamp(1.5rem, 1.15rem + 1.2vw, 2.25rem)", { lineHeight: "1.12", letterSpacing: "-0.03em" }],
+        lead: ["clamp(1.05rem, 0.98rem + 0.35vw, 1.3rem)", { lineHeight: "1.6" }],
+      },
+      maxWidth: {
+        site: "1360px",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        "gradient-hero":
-          "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(18,213,111,0.25), transparent), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(9,151,213,0.15), transparent), radial-gradient(ellipse 60% 40% at 20% 60%, rgba(20,164,188,0.12), transparent)",
+        "brand-line": "linear-gradient(90deg, #12D56F 0%, #14A4BC 50%, #0997D5 100%)",
       },
       animation: {
-        "fade-in": "fadeIn 0.6s ease-out",
-        "slide-up": "slideUp 0.6s ease-out",
-        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        float: "float 6s ease-in-out infinite",
-        "border-flow": "borderFlow 3s linear infinite",
-        "gradient-shift": "gradientShift 8s ease infinite",
+        // Entradas above-the-fold en CSS: corren desde el primer pintado, sin esperar a React.
+        rise: "rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both",
+        lift: "lift 0.9s cubic-bezier(0.22, 1, 0.36, 1) both",
+        enter: "enter 0.8s cubic-bezier(0.22, 1, 0.36, 1) both",
+        // Trazado de las cintas de la trama (una sola vez).
+        draw: "draw 1.8s cubic-bezier(0.65, 0, 0.35, 1) both",
       },
       keyframes: {
-        fadeIn: {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
+        rise: {
+          "0%": { transform: "translateY(105%)" },
+          "100%": { transform: "translateY(0)" },
         },
-        slideUp: {
-          "0%": { transform: "translateY(20px)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
+        lift: {
+          "0%": { transform: "translateY(28px)" },
+          "100%": { transform: "translateY(0)" },
         },
-        float: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-10px)" },
+        enter: {
+          "0%": { opacity: "0", transform: "translateY(16px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        borderFlow: {
-          "0%": { backgroundPosition: "0% 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
-          "100%": { backgroundPosition: "0% 50%" },
-        },
-        gradientShift: {
-          "0%, 100%": { backgroundPosition: "0% 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
+        draw: {
+          "0%": { strokeDashoffset: "1" },
+          "100%": { strokeDashoffset: "0" },
         },
       },
       boxShadow: {
-        glow: "0 0 20px rgba(18, 213, 111, 0.3)",
-        "glow-teal": "0 0 20px rgba(20, 164, 188, 0.3)",
-        "glow-blue": "0 0 20px rgba(9, 151, 213, 0.3)",
-        glass: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
-        "card-hover": "0 20px 60px rgba(18, 213, 111, 0.15)",
-      },
-      backdropBlur: {
-        xs: "2px",
+        card: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 20px 50px -20px rgba(0,0,0,0.6)",
+        nav: "0 8px 32px -8px rgba(0,0,0,0.55)",
       },
       screens: {
         xs: "480px",

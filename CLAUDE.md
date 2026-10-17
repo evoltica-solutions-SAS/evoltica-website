@@ -1,12 +1,12 @@
 # CLAUDE.md
 
-> **Versión**: 1.1 · **Estado**: Active · **Última actualización**: 2026-07-07 · **Responsable**: Evoltica Solutions SAS
+> **Versión**: 1.4 · **Estado**: Active · **Última actualización**: 2026-10-10 · **Responsable**: Evoltica Solutions SAS
 
 Punto de entrada oficial del proyecto **Evoltica Solutions SAS — sitio web**. Este archivo se auto-carga en cada sesión de Claude Code. Es deliberadamente corto: su trabajo es orientarte hacia el documento correcto en `.claude/`, no contener el detalle en sí. Ningún contenido de aquí se duplica en otro archivo — si buscas una regla y no está aquí, está en uno de los documentos enlazados abajo.
 
 ## Descripción del proyecto
 
-Sitio web corporativo de Evoltica Solutions SAS, una consultora tecnológica colombiana. Landing de una sola página (`/`) con secciones ancladas por hash más una página de detalle de servicios (`/servicios`). Next.js 15 + TypeScript + Tailwind, desplegado en Vercel. Su función es comunicar la propuesta de valor de la empresa y convertir visitantes en leads vía formulario de contacto y WhatsApp.
+Sitio web corporativo de Evoltica Solutions SAS, una consultora tecnológica colombiana. Sitio corporativo multipágina: home (`/`), portafolio y una página por servicio (`/servicios`, `/servicios/[slug]`), `/nosotros`, `/casos-de-exito` y `/contacto` (ver ADR-007), más el catálogo de soluciones (`/soluciones`, `/soluciones/[slug]`) y las solicitudes de diagnóstico, consultoría y cotización (`/diagnostico`, `/consultoria`, `/cotizar`: prototipo solo en desarrollo). Evoluciona hacia una plataforma comercial B2B propia, independiente de Odoo, con portal de clientes (`/app`) y administración (`/admin`) (ver ADR-012 y ADR-014); persistencia e identidad aún sin proveedor elegido (ADR-015). Next.js 15 + TypeScript + Tailwind, desplegado en Vercel. Su función es comunicar la propuesta de valor de la empresa y convertir visitantes en leads vía formulario de contacto y WhatsApp.
 
 ## Cómo usar esta documentación
 

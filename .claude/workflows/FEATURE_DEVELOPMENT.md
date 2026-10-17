@@ -86,7 +86,7 @@ Todo el checklist de [AI_GUIDELINES.md § 13](../AI_GUIDELINES.md#13-checklist-a
 | Una convención de código/diseño nueva | La guía de dominio correspondiente |
 | Una decisión permanente (tecnología, marca) | ADR nuevo/actualizado + `CHANGELOG_ARCHITECTURE.md` |
 | Contenido de servicios/negocio | `BUSINESS_CONTEXT.md` (si cambia una regla vigente, no solo el copy en sí) |
-| Metadata/rutas | Verificar `SEO_GUIDE.md` y `public/sitemap.xml` |
+| Metadata/rutas | Verificar `SEO_GUIDE.md` y `app/sitemap.ts` |
 | Una prioridad futura, no esta tarea | `ROADMAP.md` |
 
 ## Ejemplo real
@@ -95,7 +95,7 @@ Todo el checklist de [AI_GUIDELINES.md § 13](../AI_GUIDELINES.md#13-checklist-a
 
 1. `BUSINESS_CONSULTANT` confirma: sirve como prueba social en el embudo, coherente con la Fase 8 ya planeada; depende de autorización de clientes reales para publicar (dependencia de negocio, no técnica — se señala al usuario).
 2. `ARCHITECT` decide: nuevo componente en `components/sections/CasosExito.tsx`, datos en `lib/casos-exito-data.ts` con su tipo exportado (siguiendo el patrón de `services-data.ts`); no requiere base de datos porque el volumen inicial es bajo y estático — **no** dispara el checkpoint de arquitectura.
-3. `DESIGNER` decide: reutiliza `glass-card`, `section-label`, `container-custom` y el arquetipo de motion de "entrada de sección" ya usado en `Services.tsx`.
+3. `DESIGNER` decide: reutiliza `card`, `eyebrow`, `container-custom` y el arquetipo de motion de "entrada de sección" (`RevealGroup`/`RevealItem`) ya usado en `ServicesIndex.tsx`.
 4. `COPYWRITER` redacta los casos siguiendo el tono de marca; señala que las cifras de impacto deben venir aprobadas por el cliente real, no inventadas.
 5. `FRONTEND_ENGINEER` implementa el componente y lo agrega a `app/page.tsx`.
 6. `SEO_SPECIALIST` confirma que los `alt` de logos de clientes y la jerarquía de encabezados son correctos.

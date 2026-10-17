@@ -16,7 +16,7 @@ Brief condensado para tareas que tocan metadata, contenido indexable o estructur
 - `title`/`description`/Open Graph/Twitter siempre sincronizados.
 - JSON-LD (`organizationSchema`, `webSiteSchema`) actualizado si cambian datos reales de la empresa.
 - `alt` descriptivo en toda imagen; jerarquía de encabezados real (un solo `h1`).
-- Rutas nuevas/eliminadas reflejadas en `public/sitemap.xml` y `public/robots.txt`.
+- Rutas nuevas/eliminadas reflejadas en `app/sitemap.ts` y `public/robots.txt`; cada página con su `canonical`.
 
 ## Nunca sin autorización
 
